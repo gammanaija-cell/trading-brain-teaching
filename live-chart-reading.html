@@ -624,11 +624,109 @@
 </div>
 
 <!-- ====================================================================== -->
-<!-- =========================== SECTION 5 ================================ -->
+<!-- =========================== SECTION 5 (NEW) ========================== -->
+<!-- ====================================================================== -->
+
+<div class="section-header" style="border-color: #fbbf24;">
+  <h2><span class="num" style="background: linear-gradient(135deg, #fbbf24, #b45309); color: #1a1a1a;">5</span>What's Actually INSIDE a Zone — Coded vs Manual</h2>
+</div>
+
+<!-- 5.1 Two layers -->
+<div class="grid single">
+  <div class="card" style="border-color: #fbbf24;">
+    <h3 style="color: #fde047;">📐 Two Zone Layers in v5.2 (don't confuse them)</h3>
+    <div class="description">
+      <span class="step info"><strong>Layer 1 — Roadmap zones (bias map):</strong> Drawn at session start (London open or NY open). These are <strong>where to look</strong>, not where to enter. They are heuristic ATR boxes anchored to session H/L. Labeled <code>ROADMAP BUY (AUTO-LONDON)</code> / <code>ROADMAP SELL (AUTO-NY)</code>.</span>
+      <span class="step info"><strong>Layer 2 — Trigger zones (entry box):</strong> Drawn ONLY when sweep + CHoCH fires inside (or near) a roadmap zone. These are <strong>where to actually enter</strong>. They carry the score badge. Labeled <code>BUY ZONE — Waiting CHOCH</code> or <code>BUY ZONE ✓ CONTINUATION</code>.</span>
+      <span class="step ok"><strong>Relationship:</strong> Roadmap = "look here." Trigger = "enter here." The score badge lives on the TRIGGER zone, not the roadmap zone.</span>
+      <span class="pidgin">Two type of zone dey. Roadmap na "where to watch" — drawn for morning, na guess sha. Trigger zone na "where to enter" — drawn when sweep + CHoCH happen, na the one with score number. No mix dem up.</span>
+    </div>
+  </div>
+</div>
+
+<!-- 5.2 + 5.3 side-by-side: coded vs manual -->
+<div class="grid" style="margin-top: 20px;">
+
+  <div class="card take">
+    <h3>✅ What v5.2 auto-detects (folded into the 18-point score)</h3>
+    <div class="description">
+      <span class="step ok"><strong>Sweep detection</strong> — PDH / PDL / Asian H/L / session H/L / equal H/L</span>
+      <span class="step ok"><strong>CHoCH</strong> — structure flip after sweep within 5 bars</span>
+      <span class="step ok"><strong>Fair Value Gap (FVG)</strong> — inside or adjacent to the zone</span>
+      <span class="step ok"><strong>Order Block (OB)</strong> — last opposing candle before displacement</span>
+      <span class="step ok"><strong>EMA alignment</strong> — price vs fast/slow EMAs</span>
+      <span class="step ok"><strong>RSI extreme veto</strong> — BLOCK above 70 / below 30</span>
+      <span class="step ok"><strong>Volume confirmation</strong> — only reliable on NQ (CME volume); gated for FX/gold</span>
+      <span class="step ok"><strong>HTF alignment count</strong> — 4H / 1H / 15M / 5M structural agreement (the Y/6 in the badge)</span>
+      <span class="step ok"><strong>Killzone gate</strong> — London / NY AM / NY PM / Asia time-windowing</span>
+      <span class="step ok"><strong>ATR-based zone width</strong> — volatility-adjusted box dimensions</span>
+      <span class="step ok"><strong>Session range capture</strong> — Asian / London / NY auto-anchored highs and lows</span>
+    </div>
+  </div>
+
+  <div class="card wait">
+    <h3>⚠️ What v5.2 does NOT see — you must add manually</h3>
+    <div class="description">
+      <span class="step warn"><strong>Volume Profile (POC, HVN, LVN)</strong> — use TradingView's "Volume Profile Visible Range" or "Fixed Range Volume Profile" tool. Why: zone inside HVN = institutional accumulation = stronger hold. Zone at LVN = thin air = price slices through.</span>
+      <span class="step warn"><strong>4H / Daily unmitigated POIs</strong> — manually mark HTF demand/supply OBs pre-session. <em>(v5.3.1 spec includes an auto-scanner for this — not yet shipped.)</em></span>
+      <span class="step warn"><strong>Liquidity pools</strong> — equal highs / equal lows / trendline liquidity not yet swept. Mark with horizontal rays.</span>
+      <span class="step warn"><strong>News event marks</strong> — NFP / CPI / FOMC release timestamps from forexfactory.</span>
+      <span class="step warn"><strong>VWAP + std-dev bands</strong> — TradingView's built-in VWAP indicator (separate overlay).</span>
+      <span class="step warn"><strong>Daily / Weekly / Monthly opens</strong> — TradingView built-in tool.</span>
+      <span class="step warn"><strong>Order book / footprint / delta / cumulative volume delta</strong> — needs broker API or CME data add-on. Skip for paper-trading phase.</span>
+      <span class="step warn"><strong>Real institutional liquidity heat-maps</strong> — paid services only (Bookmap, NinjaTrader Order Flow). Out of scope.</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- 5.4 Pre-pass checklist -->
+<div class="grid single">
+  <div class="card" style="border-color: #06b6d4; margin-top: 20px;">
+    <h3 style="color: #22d3ee;">🔍 Pre-Pass Zone Quality Checklist (verify BEFORE the dual-pass)</h3>
+    <div class="description">
+      <span class="step info">The 18-point score measures <strong>TRIGGER quality</strong> (the moment of execution). This 8-point checklist measures <strong>ZONE quality</strong> (the location of the trade). A high score in a low-quality zone = textbook bull trap.</span>
+      <span class="step info">Run this checklist on the 15M chart before you read the score. <strong>If 6+ checks pass, the zone is high-quality. If &lt;4, even a 14/18 score is suspect.</strong></span>
+
+      <div style="background:#0f1419;padding:18px 24px;border-radius:8px;margin:14px 0;border-left:4px solid #22d3ee;">
+        <ol style="color:#cbd5e1;font-size:13px;line-height:2;list-style-type: decimal;padding-left:24px;">
+          <li><strong style="color:#fde047;">Zone is FRESH</strong> — first touch &gt; second touch &gt; third touch. Each tap consumes orders.</li>
+          <li><strong style="color:#fde047;">Inside or at HVN</strong> — high-volume node behind it = institutional accumulation. <em>(manual — Volume Profile tool)</em></li>
+          <li><strong style="color:#fde047;">NOT at LVN</strong> — low-volume node = thin air, price slices through. Avoid these.</li>
+          <li><strong style="color:#fde047;">Confluence with 4H / Daily POI</strong> — HTF demand/supply OB sitting inside the 15M zone = compounded edge.</li>
+          <li><strong style="color:#fde047;">Liquidity pool nearby</strong> — equal highs/lows above (sells) or below (buys) = institutions need to grab it. Marks the targets.</li>
+          <li><strong style="color:#fde047;">Created by DISPLACEMENT</strong>, not slow drift — sharp move out of the level = aggressive participation. Slow consolidation = weak.</li>
+          <li><strong style="color:#fde047;">Distance from POC</strong> — far from POC = trend continuation possible. Close to POC = mean-reversion magnet (avoid for breakout entries).</li>
+          <li><strong style="color:#fde047;">Killzone-formed</strong> — zones created during London or NY AM are stronger than zones created in Asia.</li>
+        </ol>
+      </div>
+
+      <strong style="color:#22d3ee;">→ Score = "should I pull the trigger?" · Checklist = "should this zone exist at all?" You need both. Score without checklist = trap. Checklist without score = patience without trigger.</strong>
+      <span class="pidgin">Score na trigger quality, but where the zone dey matter pass. Zone for HVN with HTF POI nearby + fresh first touch — even 11/18 score go work. Zone for LVN, no HTF backing, third touch — even 17/18 go disappoint. Always check zone quality first, score after.</span>
+    </div>
+  </div>
+</div>
+
+<!-- 5.5 Honesty caveat -->
+<div class="grid single">
+  <div class="card skip" style="margin-top: 20px;">
+    <h3 style="color: #fca5a5;">⚠️ Honesty Caveat — the roadmap is heuristic, not gospel</h3>
+    <div class="description">
+      <span class="step warn">v5.2's roadmap is built from <strong>ATR-buffered boxes anchored to session highs/lows</strong> (Asian H/L for London open, more extreme of London or Asian range for NY open). It is <strong>NOT</strong> a real institutional POI scanner. It does NOT read volume profile. It does NOT scan 4H/Daily order blocks.</span>
+      <span class="step warn">The boxes will sometimes draw at locations that have no actual liquidity behind them. Treat the roadmap as <strong>"first guess at session liquidity,"</strong> not as validated institutional levels.</span>
+      <span class="step warn">This is precisely why the manual pre-pass checklist above matters. The score gate measures trigger cleanliness; your eyes have to validate the location quality.</span>
+      <span class="step ok"><strong>v5.3.1 spec (planned, not yet shipped):</strong> replaces the heuristic ATR anchor with a proper HTF order-block scanner that scans 4H / Daily for unmitigated demand and supply, then uses those as roadmap anchors instead of session-range high/low. Volume Profile integration (POC/HVN/LVN scoring) is on the v5.4 backlog. Until those ship, you do this validation manually.</span>
+      <span class="pidgin">The roadmap box no be real institutional level — na ATR estimate around session H/L. E fit dey correct, e fit dey wrong. The score check trigger only — you must check zone location yourself with your eyes (POC, HVN, HTF POI). Two work — bot dey do trigger, you dey do zone validation.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- =========================== SECTION 6 ================================ -->
 <!-- ====================================================================== -->
 
 <div class="section-header">
-  <h2><span class="num">5</span>The Roadmap as Confluence Pool</h2>
+  <h2><span class="num">6</span>The Roadmap as Confluence Pool</h2>
 </div>
 
 <div class="grid single">
