@@ -551,6 +551,70 @@
 </div>
 
 <!-- ====================================================================== -->
+<!-- SECTION 7 — VP-ZONE-ROADMAP INTEGRATION TOGGLES (v5.5.4)                -->
+<!-- ====================================================================== -->
+
+<div class="section-header" style="border-color:#9C27B0;">
+  <h2><span class="num" style="background:linear-gradient(135deg,#9C27B0,#6b21a8);color:white;">7</span>VP-Zone-Roadmap Integration Toggles (v5.5.4)</h2>
+</div>
+
+<div class="card" style="border-color:#9C27B0;">
+  <h3 style="color:#d8b4fe;">🔗 How deeply VP is integrated — and how to control it</h3>
+  <p style="color:#cbd5e1;font-size:14px;line-height:1.7;margin-bottom:14px;">
+    By default, VP is integrated as a <strong>bonus layer</strong> — it adds to the score, weights the conviction multiplier, and provides visual context. v5.5.4 adds 3 toggles that let you enforce VP integration at <strong>institutional strict</strong> level when you're ready.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Toggle</th><th>Default</th><th>What it does</th><th>When to flip ON</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>require_vp_for_top_tier</code></td>
+        <td>OFF</td>
+        <td>A++/A+/B+ alerts ONLY fire if zone overlaps VAL/VAH/HVN/POC OR is within 1 ATR of any HTF POC. Without VP backing → no tier triggers.</td>
+        <td>After 30+ trades logged. Filters AGGRESSIVELY for institutionally-backed setups only.</td>
+      </tr>
+      <tr>
+        <td><code>roadmap_use_vp_anchor</code></td>
+        <td>OFF</td>
+        <td>Auto-roadmap anchors at <strong>VAL</strong> (buy zone) and <strong>VAH</strong> (sell zone) instead of Asian Low/High. NY mode uses min(VAL, Asian Low) and max(VAH, Asian High) for conservative blend.</td>
+        <td>Once you're consistently entering prior_val_in / prior_vah_in pre-session. Replaces heuristic ATR boxes with real institutional levels.</td>
+      </tr>
+      <tr>
+        <td><code>show_vp_backed_badge</code></td>
+        <td>ON</td>
+        <td>Internal flag for visual badge on zones with VP overlap. Cosmetic enhancement.</td>
+        <td>Leave on — purely informational.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="color:#fde047;margin-top:24px;">📊 VP integration depth across the system</h3>
+  <table>
+    <thead><tr><th>Layer</th><th>VP integration</th><th>Required or Bonus?</th></tr></thead>
+    <tbody>
+      <tr><td>Visual on chart</td><td>POC/VAH/VAL/HVN1/HVN2 always drawn</td><td>Always ON</td></tr>
+      <tr><td>Score (/18)</td><td>VP Tier T1/T2/T3 adds +1 to +3</td><td>Bonus</td></tr>
+      <tr><td>Score (/18)</td><td>HTF POC magnets add +1 to +2</td><td>Bonus</td></tr>
+      <tr><td>Score (/18)</td><td>Wick rejection at VAH/VAL adds +1</td><td>Bonus</td></tr>
+      <tr><td>Score (/18)</td><td>Trend-day continuation through value adds +2</td><td>Bonus</td></tr>
+      <tr><td>Conviction multiplier</td><td>Location mult ×0.6 to ×1.3 based on VP overlap</td><td>Heavy weighting</td></tr>
+      <tr><td>Roadmap formation</td><td>Optionally anchored at VAL/VAH (v5.5.4 toggle)</td><td>Optional — toggle</td></tr>
+      <tr><td>Tier gating</td><td>Optional hard requirement for VP overlap (v5.5.4 toggle)</td><td>Optional — toggle</td></tr>
+      <tr><td>Dashboard</td><td>VP Tier row + advice + HTF POC magnet row</td><td>Always shown when enabled</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="color:#fde047;margin-top:24px;">🎯 Recommended progression</h3>
+  <span class="step ok"><strong>Phase 1 (trades 1-15):</strong> Both toggles OFF. System works as bonus layer. You learn the score and conviction system without strict filtering. Use this to see how often VP overlap coincides with real wins.</span>
+  <span class="step ok"><strong>Phase 2 (trades 15-30):</strong> <code>roadmap_use_vp_anchor</code> ON, <code>require_vp_for_top_tier</code> OFF. You're inputting prior_val_in / prior_vah_in daily, so the roadmap becomes VP-anchored. Tier gates remain flexible.</span>
+  <span class="step warn"><strong>Phase 3 (trades 30+):</strong> Both ON. Strict institutional mode. Far fewer alerts but higher precision. Recommended after your edge is statistically validated.</span>
+
+  <span class="pidgin">VP integration get 3 levels: bonus only (default), VP-anchored roadmap (medium), VP-required for tier (strict). Start at bonus level. After 30 trades when you trust the system, flip to medium. After your edge prove, flip to strict. No rush.</span>
+</div>
+
+<!-- ====================================================================== -->
 <!-- KEY TAKEAWAY                                                            -->
 <!-- ====================================================================== -->
 
