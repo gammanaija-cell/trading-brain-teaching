@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sweep → CHoCH within 5 bars — The Hidden Entry Model</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
+    color: #e6e9ef;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 24px;
+    background: linear-gradient(90deg, #1e3a5f 0%, #2d5a8c 50%, #1e3a5f 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #4ade80, #fbbf24, #ef4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    font-size: 14px;
+    color: #9ca3af;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .scenario {
+    background: #1a2332;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #2a3548;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .scenario.valid { border-color: #22c55e; }
+  .scenario.invalid { border-color: #f59e0b; }
+  .scenario h2 {
+    font-size: 18px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scenario.valid h2 { color: #4ade80; }
+  .scenario.invalid h2 { color: #fbbf24; }
+  .scenario .verdict {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+  .scenario.valid .verdict {
+    background: #166534;
+    color: #bbf7d0;
+  }
+  .scenario.invalid .verdict {
+    background: #7c2d12;
+    color: #fed7aa;
+  }
+  .scenario svg {
+    width: 100%;
+    height: auto;
+    background: #0a1018;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  .description {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #cbd5e1;
+  }
+  .description strong { color: #e6e9ef; }
+  .description .step {
+    display: block;
+    margin: 6px 0;
+    padding-left: 8px;
+    border-left: 3px solid #3b82f6;
+  }
+  .description .step.bull { border-color: #22c55e; }
+  .description .step.bear { border-color: #ef4444; }
+  .description .step.warn { border-color: #f59e0b; }
+  .description .pidgin {
+    display: block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: rgba(34, 197, 94, 0.08);
+    border-radius: 6px;
+    border-left: 3px solid #22c55e;
+    color: #86efac;
+    font-style: italic;
+    font-size: 12.5px;
+  }
+  .description .pidgin::before {
+    content: "🇳🇬 In Pidgin: ";
+    font-weight: 700;
+    font-style: normal;
+    color: #4ade80;
+  }
+  .showcase {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1a2332 100%);
+    border-radius: 12px;
+    padding: 28px;
+    border: 2px solid #fbbf24;
+    box-shadow: 0 8px 32px rgba(251, 191, 36, 0.2);
+    max-width: 1600px;
+    margin: 32px auto;
+    grid-column: 1 / -1;
+  }
+  .showcase h2 {
+    font-size: 22px;
+    color: #fde047;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .showcase .verdict {
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    color: #1a1a1a;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+  .showcase-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  .confluence-stack {
+    background: #0f1419;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #2a3548;
+  }
+  .confluence-stack h4 {
+    color: #fbbf24;
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+  .confluence-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #1a2332;
+    font-size: 12px;
+  }
+  .confluence-row:last-child { border-bottom: none; }
+  .confluence-row .check { color: #4ade80; font-weight: 700; }
+  .worksheet {
+    background: #1a2332;
+    border-radius: 12px;
+    padding: 28px;
+    border: 1px solid #2a3548;
+    max-width: 1600px;
+    margin: 32px auto;
+  }
+  .worksheet h3 {
+    color: #fbbf24;
+    margin-bottom: 8px;
+    font-size: 20px;
+  }
+  .worksheet .instruction {
+    color: #9ca3af;
+    margin-bottom: 20px;
+    font-size: 13px;
+    font-style: italic;
+  }
+  .worksheet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .worksheet-q {
+    background: #0a1018;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #2a3548;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .worksheet-q:hover { border-color: #4ade80; transform: translateY(-2px); }
+  .worksheet-q .q-label {
+    background: #fbbf24;
+    color: #1a1a1a;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+  .answer {
+    margin-top: 12px;
+    padding: 10px;
+    background: #0f1419;
+    border-radius: 6px;
+    font-size: 12px;
+    border-left: 3px solid #4ade80;
+    display: none;
+  }
+  .worksheet-q.revealed .answer { display: block; }
+  .worksheet-q .reveal-hint {
+    text-align: center;
+    color: #6b7280;
+    font-size: 11px;
+    margin-top: 8px;
+  }
+  .worksheet-q.revealed .reveal-hint { display: none; }
+  .png-tip {
+    background: #1e3a5f;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 24px auto;
+    max-width: 1600px;
+    border-left: 4px solid #60a5fa;
+    color: #cbd5e1;
+    font-size: 13px;
+  }
+  .png-tip strong { color: #93c5fd; }
+
+  /* === Workflow / Flow Order Section === */
+  .workflow {
+    max-width: 1600px;
+    margin: 32px auto;
+    background: linear-gradient(135deg, #1a2332 0%, #0f1419 100%);
+    border-radius: 12px;
+    padding: 28px;
+    border: 1px solid #2a3548;
+  }
+  .workflow h2 {
+    color: #fbbf24;
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .workflow .workflow-subtitle {
+    color: #9ca3af;
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+  .workflow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: stretch;
+  }
+  .workflow-step {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 20px;
+    padding: 18px 20px;
+    border-radius: 10px;
+    margin: 0;
+    align-items: center;
+    border-left: 6px solid;
+    background: #0f1419;
+    position: relative;
+  }
+  .workflow-step.step1 { border-left-color: #3b82f6; background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), transparent); }
+  .workflow-step.step2 { border-left-color: #06b6d4; background: linear-gradient(90deg, rgba(6, 182, 212, 0.15), transparent); }
+  .workflow-step.step3 { border-left-color: #14b8a6; background: linear-gradient(90deg, rgba(20, 184, 166, 0.15), transparent); }
+  .workflow-step.step4 {
+    border-left-color: #ef4444;
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.18), transparent);
+    border: 2px solid #f87171;
+  }
+  .workflow-step.step5 {
+    border-left-color: #fbbf24;
+    background: linear-gradient(90deg, rgba(251, 191, 36, 0.20), rgba(251, 191, 36, 0.05));
+    border: 2px solid #fde047;
+    box-shadow: 0 0 24px rgba(251, 191, 36, 0.25);
+  }
+  .workflow-step.step6 { border-left-color: #22c55e; background: linear-gradient(90deg, rgba(34, 197, 94, 0.15), transparent); }
+  .workflow-arrow {
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #4b5563;
+    font-size: 24px;
+    line-height: 1;
+  }
+  .step-num {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .step1 .step-num { background: linear-gradient(135deg, #3b82f6, #1e40af); }
+  .step2 .step-num { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+  .step3 .step-num { background: linear-gradient(135deg, #14b8a6, #0d6760); }
+  .step4 .step-num { background: linear-gradient(135deg, #ef4444, #991b1b); }
+  .step5 .step-num { background: linear-gradient(135deg, #fbbf24, #b45309); color: #1a1a1a; }
+  .step6 .step-num { background: linear-gradient(135deg, #22c55e, #15803d); }
+  .step-body { display: flex; flex-direction: column; gap: 4px; }
+  .step-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #e6e9ef;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .step-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .tag-blocking { background: #7f1d1d; color: #fecaca; }
+  .tag-focus { background: #fbbf24; color: #1a1a1a; }
+  .step-do {
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .step-do strong { color: #fbbf24; }
+  .step-output {
+    color: #6b7280;
+    font-size: 12px;
+    font-style: italic;
+    margin-top: 2px;
+  }
+  .step-output::before {
+    content: "→ Output: ";
+    font-weight: 700;
+    font-style: normal;
+    color: #4b5563;
+  }
+  .workflow-warning {
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: rgba(239, 68, 68, 0.12);
+    border-left: 4px solid #ef4444;
+    border-radius: 6px;
+    color: #fca5a5;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .workflow-warning strong { color: #fecaca; }
+  .legend {
+    margin-top: 32px;
+    padding: 24px;
+    background: #1a2332;
+    border-radius: 12px;
+    border: 1px solid #2a3548;
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .legend h3 {
+    margin-bottom: 16px;
+    color: #fbbf24;
+    font-size: 18px;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    font-size: 13px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .legend-swatch {
+    width: 24px;
+    height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    padding: 16px;
+    color: #6b7280;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .key-takeaway {
+    background: linear-gradient(90deg, #166534, #15803d);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 32px auto;
+    max-width: 1600px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(22, 101, 52, 0.4);
+  }
+  @media print {
+    body { background: white; color: black; }
+    .scenario { background: #f9fafb; border-color: #d1d5db; }
+    .scenario svg { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>SWEEP → CHoCH within 5 bars</h1>
+  <div class="subtitle">The Hidden Entry Model · CallistoFX SMC · 4 Examples + Perfect Showcase + Worksheet · 🇳🇬 English & Pidgin</div>
+</div>
+
+<!-- ====================== WORKFLOW / FLOW ORDER ====================== -->
+<div class="workflow">
+  <h2>🗺️ How to use these scenarios — the 4-TF Top-Down Workflow</h2>
+  <div class="workflow-subtitle">
+    The candlestick scenarios below are <strong style="color:#fde047;">step 5 of 6</strong>.
+    Don't drop to 5M and start hunting for sweep→CHoCH until steps 1-4 are green.
+    Most losing trades happen because the trader skipped to 5M too early.
+  </div>
+
+  <div class="workflow-steps">
+
+    <div class="workflow-step step1">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">📊 4H BIAS</div>
+        <div class="step-do"><strong>DO:</strong> Open the 4H chart. Higher highs + higher lows = bullish. Lower highs + lower lows = bearish. Sideways = NEUTRAL = no trade today.</div>
+        <div class="step-output">One word in your head — "BUY today" or "SELL today" or "skip"</div>
+      </div>
+    </div>
+    <div class="workflow-arrow">▼</div>
+
+    <div class="workflow-step step2">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">🎯 1H STRUCTURE + POI</div>
+        <div class="step-do"><strong>DO:</strong> Drop to 1H. Confirm 1H structure agrees with 4H. Mark the last unmitigated demand OB (for buys) or supply OB (for sells). Mark any 1H FVG that hasn't been closed.</div>
+        <div class="step-output">A horizontal line on your chart marking the 1H zone — your "destination"</div>
+      </div>
+    </div>
+    <div class="workflow-arrow">▼</div>
+
+    <div class="workflow-step step3">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">📍 15M ZONE + ROADMAP</div>
+        <div class="step-do"><strong>DO:</strong> Drop to 15M. Check the indicator's roadmap layer (AUTO-LONDON / AUTO-NY / MANUAL boxes). Is your 1H POI inside it? Is zone status CONFIRMED or BREAKER on the indicator dashboard?</div>
+        <div class="step-output">"Price is approaching the zone" or "Far away — set alert and walk away"</div>
+      </div>
+    </div>
+    <div class="workflow-arrow">▼</div>
+
+    <div class="workflow-step step4">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">⏰ KILLZONE GATE <span class="step-tag tag-blocking">BLOCKING</span></div>
+        <div class="step-do"><strong>DO:</strong> Check current ET time. Asia 20:00-01:00 / London 02:00-05:00 / NY AM 09:30-12:00 / NY PM 13:30-16:00. <strong style="color:#fca5a5;">If outside any killzone, STOP HERE.</strong> No matter how good the setup looks, rule 8.2 says no trade.</div>
+        <div class="step-output">"Inside killzone, continue" or "Off-hours, set alert + walk away"</div>
+      </div>
+    </div>
+    <div class="workflow-arrow">▼</div>
+
+    <div class="workflow-step step5">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">⭐ 5M SWEEP → CHoCH <span class="step-tag tag-focus">★ THE 5 SCENARIOS BELOW</span></div>
+        <div class="step-do"><strong>DO:</strong> NOW drop to 5M (not before). Watch for sweep of a key level (Asian H/L, PDH/PDL, equal H/L) inside the 1H zone. Within 5 bars of the sweep, watch for CHoCH (close above swing high for buys, close below swing low for sells).</div>
+        <div class="step-output">Entry trigger fires on the exact 5M bar where sweep + CHoCH align — the scenarios below show what this looks like in real candles</div>
+      </div>
+    </div>
+    <div class="workflow-arrow">▼</div>
+
+    <div class="workflow-step step6">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="step-title">✅ SCORE + RR + BOT VERDICT</div>
+        <div class="step-do"><strong>DO:</strong> Read indicator score (out of /18) and HTF count (out of /6). Calculate RR — must be ≥ 1:3. Calculate position size for 1% risk. DM <code>@seyilisto_v2_bot</code> with the full setup. Bot replies TAKE / SKIP / WAIT in 7-15s.</div>
+        <div class="step-output">If TAKE → place order with exact SL / TP1 / TP2. If SKIP → log the reason in journal. If WAIT → re-check in 5-10 bars.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="workflow-warning">
+    <strong>⚠️ Why students fail:</strong> They open 5M too early, see a sweep, get excited, enter, and lose.
+    Sweep→CHoCH on 5M is meaningless without 4H bias agreeing, the 1H zone aligned, and the killzone open.
+    The pattern is the <em>trigger</em>, not the <em>setup</em>. The setup is everything in steps 1-4.
+    Drill this order into your students before you let them touch the 5M timeframe.
+  </div>
+</div>
+
+<div class="grid">
+
+  <!-- ====================== SCENARIO 1: VALID A++ BUY ====================== -->
+  <div class="scenario valid">
+    <h2>📈 Scenario 1 — Valid A++ BUY</h2>
+    <span class="verdict">✓ TAKE — A++ SIGNAL</span>
+    <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg">
+      <!-- Title strip -->
+      <rect x="0" y="0" width="600" height="28" fill="#1e3a5f"/>
+      <text x="300" y="18" text-anchor="middle" fill="#bbf7d0" font-size="13" font-weight="700">XAUUSD · 5M · BUY SETUP</text>
+
+      <!-- Chart background grid -->
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332" stroke-width="1"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332" stroke-width="1"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332" stroke-width="1"/>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#1a2332" stroke-width="1"/>
+      <line x1="40" y1="300" x2="560" y2="300" stroke="#1a2332" stroke-width="1"/>
+
+      <!-- Swing high reference line (CHoCH anchor) -->
+      <line x1="40" y1="100" x2="560" y2="100" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" opacity="0.7"/>
+      <text x="48" y="94" fill="#60a5fa" font-size="11" font-weight="600">SWING HIGH (CHoCH anchor)</text>
+
+      <!-- PDL key level -->
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#fb923c" stroke-width="2" stroke-dasharray="6,3" opacity="0.8"/>
+      <text x="48" y="234" fill="#fdba74" font-size="11" font-weight="600">PDL · KEY LIQUIDITY LEVEL</text>
+
+      <!-- Prior bars (downtrend / consolidation, 4 small red bars) -->
+      <!-- Bar -3 -->
+      <line x1="80" y1="180" x2="80" y2="225" stroke="#ef5350" stroke-width="1"/>
+      <rect x="73" y="190" width="14" height="25" fill="#ef5350"/>
+      <!-- Bar -2 -->
+      <line x1="115" y1="195" x2="115" y2="235" stroke="#ef5350" stroke-width="1"/>
+      <rect x="108" y="205" width="14" height="25" fill="#ef5350"/>
+      <!-- Bar -1 (small green doji) -->
+      <line x1="150" y1="200" x2="150" y2="235" stroke="#26a69a" stroke-width="1"/>
+      <rect x="143" y="215" width="14" height="15" fill="#26a69a"/>
+
+      <!-- BAR 0: SWEEP — large red candle, wick pierces below PDL, closes above PDL -->
+      <line x1="200" y1="195" x2="200" y2="275" stroke="#ef5350" stroke-width="1.5"/>
+      <rect x="193" y="220" width="14" height="25" fill="#ef5350"/>
+      <!-- Sweep arrow -->
+      <path d="M 215 275 L 230 285 L 230 280 L 240 280 L 240 290 L 230 290 L 230 295 L 215 285 Z" fill="#ec4899"/>
+      <text x="245" y="284" fill="#f472b6" font-size="11" font-weight="700">SWEEP!</text>
+      <text x="245" y="296" fill="#f472b6" font-size="9">Wick pierces PDL,</text>
+      <text x="245" y="307" fill="#f472b6" font-size="9">closes back above</text>
+
+      <!-- Bar 1: small green reversal -->
+      <line x1="245" y1="195" x2="245" y2="220" stroke="#26a69a" stroke-width="1"/>
+      <rect x="238" y="200" width="14" height="20" fill="#26a69a"/>
+      <!-- Bar 2: green continuation -->
+      <line x1="280" y1="170" x2="280" y2="205" stroke="#26a69a" stroke-width="1"/>
+      <rect x="273" y="180" width="14" height="20" fill="#26a69a"/>
+      <!-- Bar 3: green continuation -->
+      <line x1="315" y1="140" x2="315" y2="180" stroke="#26a69a" stroke-width="1"/>
+      <rect x="308" y="155" width="14" height="20" fill="#26a69a"/>
+
+      <!-- BAR 4: CHoCH — large green candle, closes ABOVE swing high -->
+      <line x1="365" y1="78" x2="365" y2="155" stroke="#26a69a" stroke-width="1.5"/>
+      <rect x="358" y="85" width="14" height="55" fill="#26a69a"/>
+      <!-- CHoCH arrow up -->
+      <path d="M 380 100 L 410 90 L 405 95 L 415 95 L 415 105 L 405 105 L 410 110 Z" fill="#22c55e"/>
+      <text x="425" y="98" fill="#4ade80" font-size="13" font-weight="800">CHoCH ▲</text>
+      <text x="425" y="111" fill="#86efac" font-size="9">Breaks swing high</text>
+      <text x="425" y="122" fill="#86efac" font-size="9">= structure flip up</text>
+
+      <!-- 5-bar window bracket -->
+      <line x1="200" y1="335" x2="365" y2="335" stroke="#fbbf24" stroke-width="2"/>
+      <line x1="200" y1="330" x2="200" y2="340" stroke="#fbbf24" stroke-width="2"/>
+      <line x1="365" y1="330" x2="365" y2="340" stroke="#fbbf24" stroke-width="2"/>
+      <text x="282" y="350" text-anchor="middle" fill="#fde047" font-size="11" font-weight="700">4 bars apart ≤ 5 ✓</text>
+
+      <!-- Bar number circles -->
+      <circle cx="200" cy="320" r="10" fill="#7c2d12" stroke="#fb923c" stroke-width="1.5"/>
+      <text x="200" y="324" text-anchor="middle" fill="#fed7aa" font-size="11" font-weight="700">0</text>
+      <circle cx="245" cy="320" r="8" fill="#374151"/><text x="245" y="323" text-anchor="middle" fill="#9ca3af" font-size="9">1</text>
+      <circle cx="280" cy="320" r="8" fill="#374151"/><text x="280" y="323" text-anchor="middle" fill="#9ca3af" font-size="9">2</text>
+      <circle cx="315" cy="320" r="8" fill="#374151"/><text x="315" y="323" text-anchor="middle" fill="#9ca3af" font-size="9">3</text>
+      <circle cx="365" cy="320" r="10" fill="#166534" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="365" y="324" text-anchor="middle" fill="#bbf7d0" font-size="11" font-weight="700">4</text>
+    </svg>
+    <div class="description">
+      <span class="step bull">① Prior trend: weakening downtrend, recent swing high marked (blue dashed)</span>
+      <span class="step bull">② Bar 0 = SWEEP: price wicks BELOW PDL, grabs sell-stops, closes back above</span>
+      <span class="step bull">③ Bars 1-3: small green candles, structure starting to reverse</span>
+      <span class="step bull">④ Bar 4 = CHoCH: closes ABOVE swing high → structure flips bullish</span>
+      <span class="step bull">⑤ Sweep + CHoCH = 4 bars apart, within 5-bar window ✓</span>
+      <strong style="color:#86efac">→ Institutional reversal signature. Take BUY at zone retest.</strong>
+      <span class="pidgin">Big money don sweep the stops below PDL — retail traders wey short don dey trapped. Then market change face — CHoCH up break the swing high. Within 4 bars, di structure don flip. Buy am for di retest, target di next liquidity pool.</span>
+    </div>
+  </div>
+
+  <!-- ====================== SCENARIO 2: VALID A++ SELL ====================== -->
+  <div class="scenario valid">
+    <h2>📉 Scenario 2 — Valid A++ SELL</h2>
+    <span class="verdict">✓ TAKE — A++ SIGNAL</span>
+    <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg">
+      <!-- Title strip -->
+      <rect x="0" y="0" width="600" height="28" fill="#7c2d12"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fed7aa" font-size="13" font-weight="700">XAUUSD · 5M · SELL SETUP</text>
+
+      <!-- Grid -->
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332" stroke-width="1"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332" stroke-width="1"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332" stroke-width="1"/>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#1a2332" stroke-width="1"/>
+      <line x1="40" y1="300" x2="560" y2="300" stroke="#1a2332" stroke-width="1"/>
+
+      <!-- PDH key level (top) -->
+      <line x1="40" y1="100" x2="560" y2="100" stroke="#fb923c" stroke-width="2" stroke-dasharray="6,3" opacity="0.8"/>
+      <text x="48" y="94" fill="#fdba74" font-size="11" font-weight="600">PDH · KEY LIQUIDITY LEVEL</text>
+
+      <!-- Swing low reference line (CHoCH anchor) -->
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" opacity="0.7"/>
+      <text x="48" y="254" fill="#60a5fa" font-size="11" font-weight="600">SWING LOW (CHoCH anchor)</text>
+
+      <!-- Prior uptrend bars -->
+      <line x1="80" y1="160" x2="80" y2="200" stroke="#26a69a" stroke-width="1"/>
+      <rect x="73" y="170" width="14" height="20" fill="#26a69a"/>
+      <line x1="115" y1="140" x2="115" y2="180" stroke="#26a69a" stroke-width="1"/>
+      <rect x="108" y="150" width="14" height="20" fill="#26a69a"/>
+      <line x1="150" y1="125" x2="150" y2="160" stroke="#26a69a" stroke-width="1"/>
+      <rect x="143" y="135" width="14" height="20" fill="#26a69a"/>
+
+      <!-- BAR 0: SWEEP — large green candle wicks ABOVE PDH, closes below -->
+      <line x1="200" y1="65" x2="200" y2="145" stroke="#26a69a" stroke-width="1.5"/>
+      <rect x="193" y="115" width="14" height="25" fill="#26a69a"/>
+      <!-- Sweep arrow -->
+      <path d="M 215 75 L 230 65 L 230 70 L 240 70 L 240 80 L 230 80 L 230 85 L 215 75 Z" fill="#ec4899"/>
+      <text x="245" y="73" fill="#f472b6" font-size="11" font-weight="700">SWEEP!</text>
+      <text x="245" y="84" fill="#f472b6" font-size="9">Wick pierces PDH,</text>
+      <text x="245" y="95" fill="#f472b6" font-size="9">closes back below</text>
+
+      <!-- Bar 1: small red reversal -->
+      <line x1="245" y1="125" x2="245" y2="160" stroke="#ef5350" stroke-width="1"/>
+      <rect x="238" y="135" width="14" height="20" fill="#ef5350"/>
+      <!-- Bar 2: red continuation -->
+      <line x1="280" y1="155" x2="280" y2="195" stroke="#ef5350" stroke-width="1"/>
+      <rect x="273" y="165" width="14" height="25" fill="#ef5350"/>
+      <!-- Bar 3: red continuation -->
+      <line x1="315" y1="180" x2="315" y2="225" stroke="#ef5350" stroke-width="1"/>
+      <rect x="308" y="195" width="14" height="25" fill="#ef5350"/>
+
+      <!-- BAR 4: CHoCH DOWN — large red candle closes BELOW swing low -->
+      <line x1="365" y1="220" x2="365" y2="285" stroke="#ef5350" stroke-width="1.5"/>
+      <rect x="358" y="225" width="14" height="55" fill="#ef5350"/>
+      <!-- CHoCH arrow down -->
+      <path d="M 380 245 L 410 255 L 405 250 L 415 250 L 415 260 L 405 260 L 410 265 Z" fill="#dc2626"/>
+      <text x="425" y="252" fill="#fca5a5" font-size="13" font-weight="800">CHoCH ▼</text>
+      <text x="425" y="265" fill="#fecaca" font-size="9">Breaks swing low</text>
+      <text x="425" y="276" fill="#fecaca" font-size="9">= structure flip down</text>
+
+      <!-- 5-bar window bracket -->
+      <line x1="200" y1="335" x2="365" y2="335" stroke="#fbbf24" stroke-width="2"/>
+      <line x1="200" y1="330" x2="200" y2="340" stroke="#fbbf24" stroke-width="2"/>
+      <line x1="365" y1="330" x2="365" y2="340" stroke="#fbbf24" stroke-width="2"/>
+      <text x="282" y="350" text-anchor="middle" fill="#fde047" font-size="11" font-weight="700">4 bars apart ≤ 5 ✓</text>
+
+      <!-- Bar numbers -->
+      <circle cx="200" cy="315" r="10" fill="#7c2d12" stroke="#fb923c" stroke-width="1.5"/>
+      <text x="200" y="319" text-anchor="middle" fill="#fed7aa" font-size="11" font-weight="700">0</text>
+      <circle cx="245" cy="315" r="8" fill="#374151"/><text x="245" y="318" text-anchor="middle" fill="#9ca3af" font-size="9">1</text>
+      <circle cx="280" cy="315" r="8" fill="#374151"/><text x="280" y="318" text-anchor="middle" fill="#9ca3af" font-size="9">2</text>
+      <circle cx="315" cy="315" r="8" fill="#374151"/><text x="315" y="318" text-anchor="middle" fill="#9ca3af" font-size="9">3</text>
+      <circle cx="365" cy="315" r="10" fill="#7f1d1d" stroke="#ef4444" stroke-width="1.5"/>
+      <text x="365" y="319" text-anchor="middle" fill="#fecaca" font-size="11" font-weight="700">4</text>
+    </svg>
+    <div class="description">
+      <span class="step bear">① Prior trend: weakening uptrend, recent swing low marked (blue dashed)</span>
+      <span class="step bear">② Bar 0 = SWEEP: price wicks ABOVE PDH, grabs buy-stops, closes back below</span>
+      <span class="step bear">③ Bars 1-3: small red candles, structure starting to reverse</span>
+      <span class="step bear">④ Bar 4 = CHoCH: closes BELOW swing low → structure flips bearish</span>
+      <span class="step bear">⑤ Sweep + CHoCH = 4 bars apart, within 5-bar window ✓</span>
+      <strong style="color:#fca5a5">→ Institutional reversal signature. Take SELL at zone retest.</strong>
+      <span class="pidgin">Smart money don sweep the stops above PDH — retail buyers wey dey long don dey caught. Quick-quick the market reverse — CHoCH down break the swing low. 4 bars na all e take. Sell for di retest, ride am go down.</span>
+    </div>
+  </div>
+
+  <!-- ====================== SCENARIO 3: INVALID — sweep but no CHoCH ====================== -->
+  <div class="scenario invalid">
+    <h2>⚠️ Scenario 3 — Sweep WITHOUT CHoCH (Continuation Trap)</h2>
+    <span class="verdict">✗ SKIP — NOT THE ENTRY MODEL</span>
+    <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#78350f"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fde68a" font-size="13" font-weight="700">XAUUSD · 5M · SWEEP HAPPENED, NO CHOCH</text>
+
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332"/>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#1a2332"/>
+      <line x1="40" y1="300" x2="560" y2="300" stroke="#1a2332"/>
+
+      <!-- Swing high — never broken -->
+      <line x1="40" y1="100" x2="560" y2="100" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" opacity="0.7"/>
+      <text x="48" y="94" fill="#60a5fa" font-size="11" font-weight="600">SWING HIGH (never broken!)</text>
+
+      <!-- PDL -->
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#fb923c" stroke-width="2" stroke-dasharray="6,3" opacity="0.8"/>
+      <text x="48" y="234" fill="#fdba74" font-size="11" font-weight="600">PDL · KEY LIQUIDITY LEVEL</text>
+
+      <!-- BAR 0: SWEEP -->
+      <line x1="100" y1="195" x2="100" y2="280" stroke="#ef5350" stroke-width="1.5"/>
+      <rect x="93" y="220" width="14" height="25" fill="#ef5350"/>
+      <path d="M 115 270 L 130 280 L 130 275 L 140 275 L 140 285 L 130 285 L 130 290 L 115 280 Z" fill="#ec4899"/>
+      <text x="145" y="280" fill="#f472b6" font-size="10" font-weight="700">SWEEP</text>
+
+      <!-- Subsequent bars: small bounces but never breaks swing high -->
+      <line x1="145" y1="200" x2="145" y2="225" stroke="#26a69a" stroke-width="1"/>
+      <rect x="138" y="205" width="14" height="20" fill="#26a69a"/>
+      <line x1="180" y1="180" x2="180" y2="215" stroke="#26a69a" stroke-width="1"/>
+      <rect x="173" y="190" width="14" height="20" fill="#26a69a"/>
+      <line x1="215" y1="155" x2="215" y2="195" stroke="#26a69a" stroke-width="1"/>
+      <rect x="208" y="165" width="14" height="20" fill="#26a69a"/>
+      <line x1="250" y1="138" x2="250" y2="170" stroke="#26a69a" stroke-width="1"/>
+      <rect x="243" y="145" width="14" height="20" fill="#26a69a"/>
+      <!-- bar 5 — bounces and FAILS at swing high -->
+      <line x1="285" y1="115" x2="285" y2="150" stroke="#ef5350" stroke-width="1"/>
+      <rect x="278" y="120" width="14" height="20" fill="#ef5350"/>
+      <!-- bars 6-8: drift sideways -->
+      <line x1="320" y1="135" x2="320" y2="170" stroke="#ef5350" stroke-width="1"/>
+      <rect x="313" y="140" width="14" height="20" fill="#ef5350"/>
+      <line x1="355" y1="150" x2="355" y2="180" stroke="#ef5350" stroke-width="1"/>
+      <rect x="348" y="160" width="14" height="20" fill="#ef5350"/>
+      <line x1="390" y1="170" x2="390" y2="205" stroke="#ef5350" stroke-width="1"/>
+      <rect x="383" y="180" width="14" height="20" fill="#ef5350"/>
+
+      <!-- Big X over the swing high level near bar 5 -->
+      <text x="310" y="92" fill="#f59e0b" font-size="20" font-weight="900">✗</text>
+      <text x="335" y="92" fill="#fbbf24" font-size="11" font-weight="700">Failed to break</text>
+
+      <!-- 5-bar window expired marker -->
+      <line x1="100" y1="335" x2="285" y2="335" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,3"/>
+      <line x1="100" y1="330" x2="100" y2="340" stroke="#f59e0b"/>
+      <line x1="285" y1="330" x2="285" y2="340" stroke="#f59e0b"/>
+      <text x="192" y="350" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="700">5-bar window — no CHoCH ✗</text>
+
+      <circle cx="100" cy="315" r="10" fill="#7c2d12" stroke="#fb923c" stroke-width="1.5"/>
+      <text x="100" y="319" text-anchor="middle" fill="#fed7aa" font-size="11" font-weight="700">0</text>
+      <circle cx="145" cy="315" r="8" fill="#374151"/><text x="145" y="318" text-anchor="middle" fill="#9ca3af" font-size="9">1</text>
+      <circle cx="180" cy="315" r="8" fill="#374151"/><text x="180" y="318" text-anchor="middle" fill="#9ca3af" font-size="9">2</text>
+      <circle cx="215" cy="315" r="8" fill="#374151"/><text x="215" y="318" text-anchor="middle" fill="#9ca3af" font-size="9">3</text>
+      <circle cx="250" cy="315" r="8" fill="#374151"/><text x="250" y="318" text-anchor="middle" fill="#9ca3af" font-size="9">4</text>
+      <circle cx="285" cy="315" r="10" fill="#7f1d1d" stroke="#ef4444" stroke-width="1.5"/>
+      <text x="285" y="319" text-anchor="middle" fill="#fecaca" font-size="11" font-weight="700">5</text>
+    </svg>
+    <div class="description">
+      <span class="step warn">① Sweep happened on bar 0 — looks promising at first</span>
+      <span class="step warn">② Bars 1-4: price bounces but never breaks the swing high</span>
+      <span class="step warn">③ Bar 5: fails at swing high level, starts rolling over</span>
+      <span class="step warn">④ Window expired without CHoCH — no structure flip</span>
+      <strong style="color:#fcd34d">→ This is a CONTINUATION trap. Smart money LET the sweep play out as a fade.<br>If you bought the sweep alone expecting reversal, you got trapped. SKIP every time.</strong>
+      <span class="pidgin">No fall for am! Sweep happen but no CHoCH — na trap. The big boys no even try reverse. If you buy sharp-sharp because you see sweep alone, you go pay school fees. Wait for the CHoCH first — if e no come within 5 bars, leave am.</span>
+    </div>
+  </div>
+
+  <!-- ====================== SCENARIO 4: INVALID — CHoCH but no sweep ====================== -->
+  <div class="scenario invalid">
+    <h2>⚠️ Scenario 4 — CHoCH WITHOUT Sweep (Lower Edge BOS)</h2>
+    <span class="verdict">⚠ B+ AT BEST — NOT A++</span>
+    <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#78350f"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fde68a" font-size="13" font-weight="700">XAUUSD · 5M · CHOCH WITHOUT SWEEP</text>
+
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332"/>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#1a2332"/>
+      <line x1="40" y1="300" x2="560" y2="300" stroke="#1a2332"/>
+
+      <line x1="40" y1="100" x2="560" y2="100" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" opacity="0.7"/>
+      <text x="48" y="94" fill="#60a5fa" font-size="11" font-weight="600">SWING HIGH</text>
+
+      <!-- PDL — never touched -->
+      <line x1="40" y1="290" x2="560" y2="290" stroke="#fb923c" stroke-width="2" stroke-dasharray="6,3" opacity="0.4"/>
+      <text x="48" y="284" fill="#fdba74" font-size="11" font-weight="600" opacity="0.5">PDL · NEVER TOUCHED</text>
+
+      <!-- Prior bars: regular downtrend, never wicks below PDL -->
+      <line x1="80" y1="180" x2="80" y2="220" stroke="#ef5350" stroke-width="1"/>
+      <rect x="73" y="190" width="14" height="20" fill="#ef5350"/>
+      <line x1="115" y1="190" x2="115" y2="230" stroke="#ef5350" stroke-width="1"/>
+      <rect x="108" y="200" width="14" height="20" fill="#ef5350"/>
+      <line x1="150" y1="200" x2="150" y2="245" stroke="#ef5350" stroke-width="1"/>
+      <rect x="143" y="220" width="14" height="20" fill="#ef5350"/>
+      <line x1="185" y1="210" x2="185" y2="250" stroke="#ef5350" stroke-width="1"/>
+      <rect x="178" y="220" width="14" height="20" fill="#ef5350"/>
+      <line x1="220" y1="200" x2="220" y2="245" stroke="#26a69a" stroke-width="1"/>
+      <rect x="213" y="210" width="14" height="20" fill="#26a69a"/>
+      <line x1="255" y1="170" x2="255" y2="220" stroke="#26a69a" stroke-width="1"/>
+      <rect x="248" y="180" width="14" height="20" fill="#26a69a"/>
+
+      <!-- CHoCH bar — green breakout, no preceding sweep -->
+      <line x1="305" y1="80" x2="305" y2="170" stroke="#26a69a" stroke-width="1.5"/>
+      <rect x="298" y="90" width="14" height="60" fill="#26a69a"/>
+      <path d="M 320 95 L 350 90 L 345 95 L 355 95 L 355 105 L 345 105 L 350 110 Z" fill="#22c55e"/>
+      <text x="365" y="98" fill="#4ade80" font-size="13" font-weight="800">CHoCH ▲</text>
+      <text x="365" y="111" fill="#86efac" font-size="9">But no liquidity</text>
+      <text x="365" y="122" fill="#86efac" font-size="9">grabbed first</text>
+
+      <!-- "No sweep!" callout near PDL -->
+      <text x="200" y="320" fill="#fbbf24" font-size="14" font-weight="800">⚠ Price never tested PDL</text>
+      <text x="200" y="335" fill="#fcd34d" font-size="10">No retail stops hunted = no smart-money tell</text>
+
+      <!-- Bar numbers -->
+      <circle cx="80" cy="350" r="6" fill="#374151"/><text x="80" y="353" text-anchor="middle" fill="#9ca3af" font-size="8">-5</text>
+      <circle cx="115" cy="350" r="6" fill="#374151"/><text x="115" y="353" text-anchor="middle" fill="#9ca3af" font-size="8">-4</text>
+      <circle cx="150" cy="350" r="6" fill="#374151"/><text x="150" y="353" text-anchor="middle" fill="#9ca3af" font-size="8">-3</text>
+      <circle cx="185" cy="350" r="6" fill="#374151"/><text x="185" y="353" text-anchor="middle" fill="#9ca3af" font-size="8">-2</text>
+      <circle cx="220" cy="350" r="6" fill="#374151"/><text x="220" y="353" text-anchor="middle" fill="#9ca3af" font-size="8">-1</text>
+      <circle cx="255" cy="350" r="6" fill="#374151"/><text x="255" y="353" text-anchor="middle" fill="#9ca3af" font-size="8">0</text>
+      <circle cx="305" cy="350" r="10" fill="#166534" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="305" y="354" text-anchor="middle" fill="#bbf7d0" font-size="11" font-weight="700">+1</text>
+    </svg>
+    <div class="description">
+      <span class="step warn">① Price was in a downtrend but never wicked below PDL — no liquidity grab</span>
+      <span class="step warn">② Two small green candles started a recovery</span>
+      <span class="step warn">③ Big green candle closes above swing high → that IS a CHoCH technically</span>
+      <span class="step warn">④ But the SEQUENCE is broken: no sweep first = no institutional reversal narrative</span>
+      <strong style="color:#fcd34d">→ This is a regular BOS (Break of Structure), not the Hidden Entry Model.<br>
+      Lower edge. Score will be lower (no +3 sweep→CHoCH bonus). B+ at best, often C tier.</strong>
+      <span class="pidgin">Structure don break, true — but no liquidity hunt happen first. Na regular BOS, no be the special pattern. The big money no show their hand yet. You fit still trade am as B+, but no expect A++ result. Score go low because no +3 bonus.</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ====================== SHOWCASE: PERFECT A++ WITH FULL CONFLUENCE STACK ====================== -->
+<div class="showcase">
+  <h2>⭐ Showcase — The Perfect A++ Setup (Full Confluence Stack)</h2>
+  <span class="verdict">★ MAX EDGE · TAKE WITH FULL POSITION SIZE ★</span>
+  <div class="showcase-grid">
+    <!-- Chart -->
+    <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;background:#0a1018;border-radius:8px;">
+      <rect x="0" y="0" width="700" height="32" fill="#fbbf24"/>
+      <text x="350" y="22" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="800">⭐ XAUUSD · 5M · NY AM KILLZONE · A++ BUY · SCORE 17/18 · HTF 6/6 ⭐</text>
+
+      <!-- Grid -->
+      <line x1="40" y1="60" x2="660" y2="60" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="660" y2="120" stroke="#1a2332"/>
+      <line x1="40" y1="180" x2="660" y2="180" stroke="#1a2332"/>
+      <line x1="40" y1="240" x2="660" y2="240" stroke="#1a2332"/>
+      <line x1="40" y1="300" x2="660" y2="300" stroke="#1a2332"/>
+
+      <!-- VWAP curve (cyan) -->
+      <path d="M 40 230 Q 150 220 250 215 Q 350 205 450 180 Q 550 155 660 130" stroke="#06b6d4" stroke-width="2" fill="none" opacity="0.7" stroke-dasharray="4,2"/>
+      <text x="48" y="225" fill="#22d3ee" font-size="10" font-weight="600">VWAP ↗ (sloping up = bull bias)</text>
+
+      <!-- Order Block (green shaded box) -->
+      <rect x="40" y="245" width="620" height="20" fill="#22c55e" opacity="0.15"/>
+      <rect x="40" y="245" width="620" height="20" fill="none" stroke="#22c55e" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="48" y="259" fill="#86efac" font-size="10" font-weight="700">📦 4H DEMAND OB (institutional zone)</text>
+
+      <!-- FVG (faint purple zone) -->
+      <rect x="220" y="200" width="200" height="20" fill="#a855f7" opacity="0.18"/>
+      <text x="225" y="214" fill="#d8b4fe" font-size="9" font-weight="600">⚡ Bull FVG (1H)</text>
+
+      <!-- Swing high (blue dashed) -->
+      <line x1="40" y1="105" x2="660" y2="105" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" opacity="0.7"/>
+      <text x="48" y="99" fill="#60a5fa" font-size="11" font-weight="600">SWING HIGH (CHoCH anchor)</text>
+
+      <!-- PDL (orange dashed) -->
+      <line x1="40" y1="265" x2="660" y2="265" stroke="#fb923c" stroke-width="2" stroke-dasharray="6,3" opacity="0.9"/>
+      <text x="48" y="278" fill="#fdba74" font-size="11" font-weight="700">PDL · Asian Low confluence</text>
+
+      <!-- Prior down bars -->
+      <line x1="80" y1="200" x2="80" y2="245" stroke="#ef5350" stroke-width="1"/>
+      <rect x="73" y="210" width="14" height="25" fill="#ef5350"/>
+      <line x1="115" y1="215" x2="115" y2="255" stroke="#ef5350" stroke-width="1"/>
+      <rect x="108" y="225" width="14" height="25" fill="#ef5350"/>
+      <line x1="150" y1="225" x2="150" y2="260" stroke="#ef5350" stroke-width="1"/>
+      <rect x="143" y="235" width="14" height="20" fill="#ef5350"/>
+
+      <!-- BAR 0: SWEEP — wick deep below PDL into OB zone -->
+      <line x1="200" y1="220" x2="200" y2="290" stroke="#ef5350" stroke-width="1.5"/>
+      <rect x="193" y="245" width="14" height="22" fill="#ef5350"/>
+      <path d="M 215 285 L 240 295 L 235 290 L 245 290 L 245 300 L 235 300 L 240 305 Z" fill="#ec4899"/>
+      <text x="252" y="293" fill="#f472b6" font-size="11" font-weight="800">SWEEP!</text>
+      <text x="252" y="305" fill="#fbcfe8" font-size="9">into 4H OB zone</text>
+
+      <!-- Bars 1-2: green reversal -->
+      <line x1="245" y1="200" x2="245" y2="240" stroke="#26a69a" stroke-width="1"/>
+      <rect x="238" y="210" width="14" height="22" fill="#26a69a"/>
+      <line x1="285" y1="170" x2="285" y2="215" stroke="#26a69a" stroke-width="1"/>
+      <rect x="278" y="180" width="14" height="22" fill="#26a69a"/>
+
+      <!-- BAR 3: CHoCH (within 3 bars — TIGHT!) -->
+      <line x1="335" y1="80" x2="335" y2="180" stroke="#26a69a" stroke-width="1.5"/>
+      <rect x="328" y="85" width="14" height="80" fill="#26a69a"/>
+      <path d="M 350 95 L 380 88 L 375 93 L 385 93 L 385 103 L 375 103 L 380 108 Z" fill="#22c55e"/>
+      <text x="395" y="93" fill="#4ade80" font-size="14" font-weight="900">CHoCH ▲</text>
+      <text x="395" y="106" fill="#86efac" font-size="9">Sliced through swing high</text>
+      <text x="395" y="117" fill="#86efac" font-size="9">on volume spike</text>
+
+      <!-- Continuation bars -->
+      <line x1="395" y1="65" x2="395" y2="100" stroke="#26a69a" stroke-width="1"/>
+      <rect x="388" y="70" width="14" height="25" fill="#26a69a"/>
+      <line x1="435" y1="50" x2="435" y2="85" stroke="#26a69a" stroke-width="1"/>
+      <rect x="428" y="55" width="14" height="25" fill="#26a69a"/>
+
+      <!-- TP1 marker -->
+      <line x1="40" y1="55" x2="660" y2="55" stroke="#fde047" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="48" y="49" fill="#fef08a" font-size="10" font-weight="700">🎯 TP2 = 1:5 RR (next liquidity pool)</text>
+
+      <!-- 5-bar window VERY TIGHT -->
+      <line x1="200" y1="365" x2="335" y2="365" stroke="#fde047" stroke-width="3"/>
+      <line x1="200" y1="358" x2="200" y2="372" stroke="#fde047" stroke-width="3"/>
+      <line x1="335" y1="358" x2="335" y2="372" stroke="#fde047" stroke-width="3"/>
+      <text x="267" y="383" text-anchor="middle" fill="#facc15" font-size="13" font-weight="800">3 bars apart — TIGHT! ★</text>
+
+      <!-- Bar number circles -->
+      <circle cx="200" cy="345" r="11" fill="#7c2d12" stroke="#fb923c" stroke-width="2"/>
+      <text x="200" y="349" text-anchor="middle" fill="#fed7aa" font-size="11" font-weight="800">0</text>
+      <circle cx="245" cy="345" r="9" fill="#374151"/><text x="245" y="348" text-anchor="middle" fill="#9ca3af" font-size="10">1</text>
+      <circle cx="285" cy="345" r="9" fill="#374151"/><text x="285" y="348" text-anchor="middle" fill="#9ca3af" font-size="10">2</text>
+      <circle cx="335" cy="345" r="11" fill="#166534" stroke="#22c55e" stroke-width="2"/>
+      <text x="335" y="349" text-anchor="middle" fill="#bbf7d0" font-size="11" font-weight="800">3</text>
+    </svg>
+
+    <!-- Confluence stack panel -->
+    <div class="confluence-stack">
+      <h4>📊 Why this is A++ (17/18 score)</h4>
+      <div class="confluence-row"><span>Killzone (NY AM)</span><span class="check">✓ +1</span></div>
+      <div class="confluence-row"><span>4H bias bullish</span><span class="check">✓ +2</span></div>
+      <div class="confluence-row"><span>1H structure CHoCH-up</span><span class="check">✓ +2</span></div>
+      <div class="confluence-row"><span>15M zone CONFIRMED</span><span class="check">✓ +2</span></div>
+      <div class="confluence-row"><span>1M-5M trigger fired</span><span class="check">✓ +1</span></div>
+      <div class="confluence-row"><span>Sweep of PDL/Asian low</span><span class="check">✓ +2</span></div>
+      <div class="confluence-row"><span>Sweep→CHoCH ≤5 bars</span><span class="check">✓ +3 BONUS</span></div>
+      <div class="confluence-row"><span>FVG inside zone</span><span class="check">✓ +1</span></div>
+      <div class="confluence-row"><span>4H demand OB at level</span><span class="check">✓ +1</span></div>
+      <div class="confluence-row"><span>VWAP sloping up</span><span class="check">✓ +1</span></div>
+      <div class="confluence-row"><span>Volume confirmed</span><span class="check">✓ +1</span></div>
+      <div class="confluence-row"><span>RSI not extreme</span><span class="check">✓ +0</span></div>
+      <div class="confluence-row" style="border-top:2px solid #fbbf24;padding-top:8px;margin-top:6px;">
+        <span style="color:#fde047;font-weight:800">TOTAL SCORE</span>
+        <span style="color:#fde047;font-weight:800">17 / 18 ★</span>
+      </div>
+      <div class="confluence-row">
+        <span style="color:#86efac;font-weight:700">HTF Count</span>
+        <span style="color:#86efac;font-weight:700">6 / 6 ★</span>
+      </div>
+      <div class="confluence-row">
+        <span style="color:#86efac;font-weight:700">Risk-Reward</span>
+        <span style="color:#86efac;font-weight:700">1 : 5+ ★</span>
+      </div>
+    </div>
+  </div>
+  <div class="description" style="margin-top:20px;">
+    <strong style="color:#fde047;font-size:15px;">🌟 What makes this PERFECT, not just A++:</strong>
+    <span class="step bull" style="border-color:#fbbf24">① Sweep happened INTO an existing 4H demand order block — double confluence at the sweep level</span>
+    <span class="step bull" style="border-color:#fbbf24">② Sweep + CHoCH only 3 bars apart (tight = stronger institutional fingerprint)</span>
+    <span class="step bull" style="border-color:#fbbf24">③ FVG inside the zone gives a precise entry point on the retest (instead of guessing)</span>
+    <span class="step bull" style="border-color:#fbbf24">④ VWAP sloping up agrees with direction (mean reversion AGAINST the move would weaken signal)</span>
+    <span class="step bull" style="border-color:#fbbf24">⑤ Asian low + PDL = SAME LEVEL → liquidity stack (multiple stop-loss clusters in one place)</span>
+    <span class="step bull" style="border-color:#fbbf24">⑥ Killzone = NY AM (highest volatility, biggest moves)</span>
+    <span class="step bull" style="border-color:#fbbf24">⑦ Score 17/18 with HTF 6/6 = top 5% of setups in any given month</span>
+    <strong style="color:#fde047;font-size:14px;">→ This is the trade you wait all week for. Full position size (still 1% risk per playbook), TP1 at 1:2, TP2 at 1:5, hold remainder for runner.</strong>
+    <span class="pidgin">This na the type of setup wey go change your week. Everything line up: killzone open, 4H bias clear, sweep happen for inside the demand zone, CHoCH come quick within 3 bars, VWAP, FVG, OB — everything connect. When you see 17/18 score with 6/6 HTF and 1:5 RR — no waste am. Take am with full size (still 1% risk o, no go violate rule 8.6), set TP1 for breakeven move, ride the runner to next liquidity pool.</span>
+  </div>
+</div>
+
+<!-- ====================== WORKSHEET ====================== -->
+<div class="worksheet">
+  <h3>📝 Practice Worksheet — Spot the Pattern</h3>
+  <div class="instruction">For each chart below, decide: Valid A++ Sweep→CHoCH? Or invalid (continuation / regular BOS)? Click each card to reveal the answer.</div>
+  <div class="worksheet-grid">
+
+    <!-- Q1 -->
+    <div class="worksheet-q" onclick="this.classList.toggle('revealed')">
+      <span class="q-label">Q1</span>
+      <svg viewBox="0 0 280 180" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="50" x2="260" y2="50" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.6"/>
+        <line x1="20" y1="120" x2="260" y2="120" stroke="#fb923c" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.6"/>
+        <!-- Down bars + sweep wick + reversal + breakout -->
+        <line x1="40" y1="90" x2="40" y2="115" stroke="#ef5350"/><rect x="35" y="95" width="10" height="15" fill="#ef5350"/>
+        <line x1="65" y1="100" x2="65" y2="125" stroke="#ef5350"/><rect x="60" y="105" width="10" height="15" fill="#ef5350"/>
+        <line x1="90" y1="105" x2="90" y2="140" stroke="#ef5350"/><rect x="85" y="110" width="10" height="15" fill="#ef5350"/>
+        <line x1="120" y1="35" x2="120" y2="115" stroke="#26a69a"/><rect x="115" y="40" width="10" height="60" fill="#26a69a"/>
+        <line x1="150" y1="30" x2="150" y2="60" stroke="#26a69a"/><rect x="145" y="35" width="10" height="20" fill="#26a69a"/>
+      </svg>
+      <div class="reveal-hint">Click to reveal answer</div>
+      <div class="answer">
+        <strong style="color:#4ade80">✓ Valid A++ BUY</strong><br>
+        Sweep wick on bar 3 (deep into PDL), CHoCH on bar 4 (closes above swing high). 1-bar gap = within window.
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="worksheet-q" onclick="this.classList.toggle('revealed')">
+      <span class="q-label">Q2</span>
+      <svg viewBox="0 0 280 180" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="50" x2="260" y2="50" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.6"/>
+        <line x1="20" y1="130" x2="260" y2="130" stroke="#fb923c" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.6"/>
+        <!-- Sweep but no CHoCH — multiple bars without breakout -->
+        <line x1="40" y1="80" x2="40" y2="135" stroke="#ef5350"/><rect x="35" y="100" width="10" height="20" fill="#ef5350"/>
+        <line x1="70" y1="90" x2="70" y2="115" stroke="#26a69a"/><rect x="65" y="95" width="10" height="15" fill="#26a69a"/>
+        <line x1="100" y1="80" x2="100" y2="105" stroke="#26a69a"/><rect x="95" y="85" width="10" height="15" fill="#26a69a"/>
+        <line x1="130" y1="75" x2="130" y2="100" stroke="#ef5350"/><rect x="125" y="80" width="10" height="15" fill="#ef5350"/>
+        <line x1="160" y1="85" x2="160" y2="110" stroke="#ef5350"/><rect x="155" y="90" width="10" height="15" fill="#ef5350"/>
+        <line x1="190" y1="95" x2="190" y2="120" stroke="#ef5350"/><rect x="185" y="100" width="10" height="15" fill="#ef5350"/>
+        <line x1="220" y1="105" x2="220" y2="135" stroke="#ef5350"/><rect x="215" y="110" width="10" height="15" fill="#ef5350"/>
+      </svg>
+      <div class="reveal-hint">Click to reveal answer</div>
+      <div class="answer">
+        <strong style="color:#fcd34d">✗ Invalid — Sweep without CHoCH</strong><br>
+        Bar 0 swept PDL but the swing high was never broken. Price drifted sideways then resumed down. Continuation trap. SKIP.
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="worksheet-q" onclick="this.classList.toggle('revealed')">
+      <span class="q-label">Q3</span>
+      <svg viewBox="0 0 280 180" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="50" x2="260" y2="50" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.6"/>
+        <line x1="20" y1="155" x2="260" y2="155" stroke="#fb923c" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.4"/>
+        <!-- Downtrend without sweeping PDL, then CHoCH up -->
+        <line x1="40" y1="90" x2="40" y2="125" stroke="#ef5350"/><rect x="35" y="100" width="10" height="20" fill="#ef5350"/>
+        <line x1="70" y1="100" x2="70" y2="135" stroke="#ef5350"/><rect x="65" y="110" width="10" height="20" fill="#ef5350"/>
+        <line x1="100" y1="105" x2="100" y2="140" stroke="#ef5350"/><rect x="95" y="115" width="10" height="20" fill="#ef5350"/>
+        <line x1="130" y1="110" x2="130" y2="135" stroke="#26a69a"/><rect x="125" y="115" width="10" height="15" fill="#26a69a"/>
+        <line x1="160" y1="80" x2="160" y2="115" stroke="#26a69a"/><rect x="155" y="85" width="10" height="20" fill="#26a69a"/>
+        <line x1="190" y1="35" x2="190" y2="85" stroke="#26a69a"/><rect x="185" y="40" width="10" height="40" fill="#26a69a"/>
+      </svg>
+      <div class="reveal-hint">Click to reveal answer</div>
+      <div class="answer">
+        <strong style="color:#fcd34d">⚠ Invalid — CHoCH without Sweep</strong><br>
+        Bar 6 broke the swing high (CHoCH ✓), but price never tested PDL — no liquidity grabbed first. Regular BOS, not the Hidden Entry Model. B+ at best.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================== PNG / SHARING TIPS ====================== -->
+<div class="png-tip">
+  <strong>📸 To convert to PNG for sharing on Telegram / WhatsApp / class slides:</strong><br>
+  &nbsp;&nbsp;<strong>Easiest:</strong> Win + Shift + S → drag a rectangle around the scenario you want → it goes to clipboard, paste into anywhere.<br>
+  &nbsp;&nbsp;<strong>Full page:</strong> Press Ctrl+P → Destination: Save as PDF → Save → use any free PDF→PNG converter (or just attach the PDF).<br>
+  &nbsp;&nbsp;<strong>Edge browser:</strong> Right-click anywhere → "Web Capture" → "Capture full page" → saves as PNG instantly.<br>
+  &nbsp;&nbsp;<strong>Print as poster:</strong> Ctrl+P → Letter / A3 size → "Save as PDF" → print physical copy. CSS auto-switches to white background for print.
+</div>
+
+<!-- ====================== KEY TAKEAWAY ====================== -->
+<div class="key-takeaway">
+  ✅ <strong>SWEEP + CHoCH within 5 bars</strong> = institutional reversal signature = highest-edge entry &nbsp;|&nbsp;
+  ❌ <strong>Sweep without CHoCH</strong> = continuation trap, skip every time &nbsp;|&nbsp;
+  ⚠️ <strong>CHoCH without sweep</strong> = regular BOS, lower edge, B+ ceiling
+</div>
+
+<!-- ====================== LEGEND ====================== -->
+<div class="legend">
+  <h3>📖 Chart Legend</h3>
+  <div class="legend-grid">
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:#26a69a"></div>
+      <span>Bullish candle (close &gt; open)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:#ef5350"></div>
+      <span>Bearish candle (close &lt; open)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:#fb923c"></div>
+      <span>Key liquidity level (PDH / PDL / equal H/L)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:#3b82f6"></div>
+      <span>Swing high / low (CHoCH anchor)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:#ec4899"></div>
+      <span>Sweep arrow (liquidity grab)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:#22c55e"></div>
+      <span>CHoCH up (structure flip bullish)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:#dc2626"></div>
+      <span>CHoCH down (structure flip bearish)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:#fbbf24"></div>
+      <span>5-bar window (sweep → CHoCH must fit inside)</span>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  CALLISTOFX SMC · GAMMA NAIJA TRADING SYSTEM · Hidden Entry Model · Pine v5.2 Section 22
+</div>
+
+</body>
+</html>

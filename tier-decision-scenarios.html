@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trade Tier Decision Scenarios — A++ vs A+ vs B+</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
+    color: #e6e9ef;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 28px;
+    background: linear-gradient(90deg, #1e3a5f 0%, #4a3c2a 50%, #1e3a5f 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #fde047, #94a3b8, #fb923c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    font-size: 13px;
+    color: #9ca3af;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .tier-table {
+    background: #1a2332;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px auto;
+    max-width: 1600px;
+    border: 1px solid #2a3548;
+  }
+  .tier-table h3 {
+    color: #fbbf24;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+  .tier-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .tier-table th {
+    text-align: left;
+    padding: 10px;
+    background: #0f1419;
+    color: #fbbf24;
+    border-bottom: 2px solid #2a3548;
+  }
+  .tier-table td {
+    padding: 10px;
+    border-bottom: 1px solid #2a3548;
+    color: #cbd5e1;
+  }
+  .tier-table tr:last-child td { border-bottom: none; }
+  .tier-table .tier-aplusplus { color: #fde047; font-weight: 700; }
+  .tier-table .tier-aplus { color: #94a3b8; font-weight: 700; }
+  .tier-table .tier-bplus { color: #fb923c; font-weight: 700; }
+  .section-header {
+    text-align: center;
+    margin: 48px auto 24px;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 1600px;
+  }
+  .section-header.aplusplus {
+    background: linear-gradient(90deg, #422006, #fbbf24, #422006);
+    border: 2px solid #fde047;
+  }
+  .section-header.aplus {
+    background: linear-gradient(90deg, #1e293b, #475569, #1e293b);
+    border: 2px solid #94a3b8;
+  }
+  .section-header.bplus {
+    background: linear-gradient(90deg, #431407, #fb923c, #431407);
+    border: 2px solid #fdba74;
+  }
+  .section-header.universal {
+    background: linear-gradient(90deg, #4c0519, #be123c, #4c0519);
+    border: 2px solid #fb7185;
+  }
+  .section-header h2 {
+    font-size: 26px;
+    margin-bottom: 4px;
+    color: #1a1a1a;
+    font-weight: 800;
+  }
+  .section-header.aplus h2 { color: #f8fafc; }
+  .section-header.universal h2 { color: #fee2e2; }
+  .section-header .badge {
+    display: inline-block;
+    padding: 4px 14px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: white;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .grid.single { grid-template-columns: 1fr; }
+  .scenario {
+    background: #1a2332;
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px solid #2a3548;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .scenario.valid-aplusplus { border-color: #fde047; box-shadow: 0 0 24px rgba(253, 224, 71, 0.18); }
+  .scenario.valid-aplus { border-color: #94a3b8; }
+  .scenario.valid-bplus { border-color: #fdba74; }
+  .scenario.invalid { border-color: #ef4444; }
+  .scenario.universal-invalid { border-color: #fb7185; }
+  .scenario h2 {
+    font-size: 17px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scenario.valid-aplusplus h2 { color: #fde047; }
+  .scenario.valid-aplus h2 { color: #cbd5e1; }
+  .scenario.valid-bplus h2 { color: #fdba74; }
+  .scenario.invalid h2 { color: #fca5a5; }
+  .scenario .verdict {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    letter-spacing: 1.2px;
+  }
+  .scenario.valid-aplusplus .verdict { background: linear-gradient(90deg, #fbbf24, #f59e0b); color: #1a1a1a; }
+  .scenario.valid-aplus .verdict { background: #475569; color: #f1f5f9; }
+  .scenario.valid-bplus .verdict { background: #c2410c; color: #fed7aa; }
+  .scenario.invalid .verdict { background: #7f1d1d; color: #fecaca; }
+  .scenario.universal-invalid .verdict { background: #881337; color: #fecdd3; }
+  .scenario svg {
+    width: 100%;
+    height: auto;
+    background: #0a1018;
+    border-radius: 8px;
+    margin-bottom: 14px;
+  }
+  .scorecard {
+    background: #0f1419;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    border: 1px solid #2a3548;
+  }
+  .scorecard h4 {
+    color: #fbbf24;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .scorecard table { width: 100%; border-collapse: collapse; }
+  .scorecard td {
+    padding: 4px 0;
+    border-bottom: 1px solid #1a2332;
+  }
+  .scorecard td:last-child { text-align: right; }
+  .scorecard tr:last-child td { border-bottom: none; padding-top: 6px; font-weight: 700; }
+  .scorecard .check { color: #4ade80; }
+  .scorecard .miss { color: #f87171; }
+  .description {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #cbd5e1;
+  }
+  .description strong { color: #e6e9ef; }
+  .description .step {
+    display: block;
+    margin: 5px 0;
+    padding-left: 10px;
+    border-left: 3px solid #3b82f6;
+  }
+  .description .step.gold { border-color: #fbbf24; }
+  .description .step.silver { border-color: #94a3b8; }
+  .description .step.bronze { border-color: #fb923c; }
+  .description .step.warn { border-color: #ef4444; }
+  .pidgin {
+    display: block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: rgba(34, 197, 94, 0.08);
+    border-radius: 6px;
+    border-left: 3px solid #22c55e;
+    color: #86efac;
+    font-style: italic;
+    font-size: 12px;
+  }
+  .pidgin::before {
+    content: "🇳🇬 In Pidgin: ";
+    font-weight: 700;
+    font-style: normal;
+    color: #4ade80;
+  }
+  .decision-matrix {
+    background: #1a2332;
+    border-radius: 12px;
+    padding: 28px;
+    margin: 48px auto;
+    max-width: 1600px;
+    border: 2px solid #fbbf24;
+  }
+  .decision-matrix h2 {
+    color: #fde047;
+    margin-bottom: 16px;
+  }
+  .decision-matrix table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .decision-matrix th {
+    background: #0f1419;
+    color: #fde047;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #fbbf24;
+  }
+  .decision-matrix td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #2a3548;
+    color: #cbd5e1;
+  }
+  .decision-matrix tr:nth-child(even) { background: #0f1419; }
+  .decision-matrix .ok { color: #4ade80; font-weight: 700; }
+  .decision-matrix .skip { color: #f87171; font-weight: 700; }
+  .key-takeaway {
+    background: linear-gradient(90deg, #166534, #15803d);
+    color: white;
+    padding: 22px;
+    border-radius: 12px;
+    margin: 32px auto;
+    max-width: 1600px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(22, 101, 52, 0.4);
+  }
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    padding: 16px;
+    color: #6b7280;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  @media print {
+    body { background: white; color: black; }
+    .scenario { background: #f9fafb; border-color: #d1d5db; }
+    .scenario svg { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>A++ · A+ · B+ Tier Decision Scenarios</h1>
+  <div class="subtitle">CallistoFX SMC · How to recognize each tier and when each becomes invalid</div>
+</div>
+
+<!-- ========================== TIER REQUIREMENTS TABLE ========================== -->
+<div class="tier-table">
+  <h3>📊 Quick reference — what each tier requires</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Tier</th>
+        <th>Min score</th>
+        <th>HTF count</th>
+        <th>Sweep→CHoCH ≤5 bars</th>
+        <th>Min RR</th>
+        <th>Allowed killzones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="tier-aplusplus">★ A++</td>
+        <td>14 / 18</td>
+        <td>≥ 5 / 6</td>
+        <td><strong style="color:#4ade80">REQUIRED</strong></td>
+        <td>1 : 3</td>
+        <td>All four (Asia / London / NY AM / NY PM)</td>
+      </tr>
+      <tr>
+        <td class="tier-aplus">A+</td>
+        <td>12 / 18</td>
+        <td>≥ 5 / 6</td>
+        <td>Optional (no +3 bonus)</td>
+        <td>1 : 3</td>
+        <td>All four</td>
+      </tr>
+      <tr>
+        <td class="tier-bplus">B+</td>
+        <td>9 / 18</td>
+        <td>3-4 / 6</td>
+        <td>Not required</td>
+        <td>1 : 3</td>
+        <td>London + NY AM only (skipped in NY PM and Asia)</td>
+      </tr>
+      <tr>
+        <td style="color:#9ca3af; font-weight:700;">C / Skip</td>
+        <td colspan="5" style="color:#f87171;">Anything missing 4-TF stack, killzone, or hard rules → no trade</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================================== -->
+<!-- ===================== SECTION: A++ VALID + INVALIDATION ====================== -->
+<!-- ============================================================================== -->
+
+<div class="section-header aplusplus">
+  <h2>★ A++ TIER · Highest Edge</h2>
+  <span class="badge">SCORE 14+/18 · HTF 5+/6 · SWEEP→CHoCH REQUIRED · RR 1:3+</span>
+</div>
+
+<div class="grid">
+
+  <!-- A++ VALID -->
+  <div class="scenario valid-aplusplus">
+    <h2>⭐ A++ Scenario 1 — Valid (Take Full Size)</h2>
+    <span class="verdict">✓ TAKE — A++ SIGNAL</span>
+    <svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#fbbf24"/>
+      <text x="300" y="18" text-anchor="middle" fill="#1a1a1a" font-size="13" font-weight="800">XAUUSD · 5M · NY AM · A++ BUY · 16/18 · HTF 5/6</text>
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332"/>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#1a2332"/>
+      <line x1="40" y1="100" x2="560" y2="100" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" opacity="0.7"/>
+      <text x="48" y="94" fill="#60a5fa" font-size="10" font-weight="600">SWING HIGH</text>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#fb923c" stroke-width="2" stroke-dasharray="6,3" opacity="0.8"/>
+      <text x="48" y="234" fill="#fdba74" font-size="10" font-weight="600">PDL · Asian Low confluence</text>
+      <rect x="40" y="220" width="520" height="20" fill="#22c55e" opacity="0.12"/>
+      <text x="48" y="216" fill="#86efac" font-size="9" font-weight="600">📦 4H Demand OB</text>
+      <line x1="80" y1="195" x2="80" y2="225" stroke="#ef5350"/><rect x="73" y="200" width="14" height="20" fill="#ef5350"/>
+      <line x1="115" y1="210" x2="115" y2="240" stroke="#ef5350"/><rect x="108" y="220" width="14" height="15" fill="#ef5350"/>
+      <line x1="200" y1="200" x2="200" y2="270" stroke="#ef5350"/><rect x="193" y="220" width="14" height="20" fill="#ef5350"/>
+      <path d="M 215 265 L 240 275 L 235 270 L 245 270 L 245 280 L 235 280 L 240 285 Z" fill="#ec4899"/>
+      <text x="252" y="275" fill="#f472b6" font-size="11" font-weight="700">SWEEP!</text>
+      <line x1="245" y1="200" x2="245" y2="225" stroke="#26a69a"/><rect x="238" y="205" width="14" height="20" fill="#26a69a"/>
+      <line x1="285" y1="170" x2="285" y2="205" stroke="#26a69a"/><rect x="278" y="180" width="14" height="20" fill="#26a69a"/>
+      <line x1="335" y1="80" x2="335" y2="170" stroke="#26a69a"/><rect x="328" y="85" width="14" height="60" fill="#26a69a"/>
+      <path d="M 350 95 L 380 88 L 375 93 L 385 93 L 385 103 L 375 103 L 380 108 Z" fill="#22c55e"/>
+      <text x="395" y="98" fill="#4ade80" font-size="13" font-weight="800">CHoCH ▲</text>
+      <line x1="200" y1="305" x2="335" y2="305" stroke="#fde047" stroke-width="2"/>
+      <text x="267" y="320" text-anchor="middle" fill="#fde047" font-size="11" font-weight="700">3 bars TIGHT! ★</text>
+      <circle cx="200" cy="290" r="9" fill="#7c2d12" stroke="#fb923c"/><text x="200" y="294" text-anchor="middle" fill="#fed7aa" font-size="10" font-weight="700">0</text>
+      <circle cx="245" cy="290" r="7" fill="#374151"/><text x="245" y="293" text-anchor="middle" fill="#9ca3af" font-size="8">1</text>
+      <circle cx="285" cy="290" r="7" fill="#374151"/><text x="285" y="293" text-anchor="middle" fill="#9ca3af" font-size="8">2</text>
+      <circle cx="335" cy="290" r="9" fill="#166534" stroke="#22c55e"/><text x="335" y="294" text-anchor="middle" fill="#bbf7d0" font-size="10" font-weight="700">3</text>
+    </svg>
+    <div class="scorecard">
+      <h4>🎯 Why A++</h4>
+      <table>
+        <tr><td>Score</td><td><span class="check">16 / 18 ✓</span></td></tr>
+        <tr><td>HTF count</td><td><span class="check">5 / 6 ✓</span></td></tr>
+        <tr><td>Sweep→CHoCH ≤5 bars</td><td><span class="check">3 bars ✓ (+3 bonus)</span></td></tr>
+        <tr><td>RR</td><td><span class="check">1 : 4 ✓</span></td></tr>
+        <tr><td>Killzone</td><td><span class="check">NY AM ✓</span></td></tr>
+        <tr><td>Verdict</td><td><span class="check">★ TAKE A++</span></td></tr>
+      </table>
+    </div>
+    <div class="description">
+      <span class="step gold">All 4 tiers of the 4-TF stack agree (4H bull, 1H demand OB, 15M CONFIRMED, 5M trigger)</span>
+      <span class="step gold">Sweep punched into 4H OB then CHoCH within 3 bars — institutional reversal</span>
+      <span class="step gold">Killzone open, RR 1:4, score above threshold</span>
+      <strong style="color:#fde047">→ The textbook A++ — full position size, 1% risk.</strong>
+      <span class="pidgin">All the boxes don tick: 4H bull, sweep happen for inside the OB, CHoCH come within 3 bars, score 16/18. This na the type of setup wey go pay your school fees and still leave change. Take am with full size.</span>
+    </div>
+  </div>
+
+  <!-- A++ INVALID — sweep happened but CHoCH outside 5-bar window -->
+  <div class="scenario invalid">
+    <h2>✗ A++ Invalidation — Sweep but CHoCH at bar 6</h2>
+    <span class="verdict">✗ NOT A++ — DOWNGRADE TO A+ (or skip)</span>
+    <svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#7f1d1d"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">XAUUSD · 5M · CHOCH FIRED OUTSIDE 5-BAR WINDOW</text>
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332"/>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#1a2332"/>
+      <line x1="40" y1="100" x2="560" y2="100" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" opacity="0.7"/>
+      <text x="48" y="94" fill="#60a5fa" font-size="10" font-weight="600">SWING HIGH</text>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#fb923c" stroke-width="2" stroke-dasharray="6,3" opacity="0.8"/>
+      <text x="48" y="234" fill="#fdba74" font-size="10" font-weight="600">PDL</text>
+      <line x1="80" y1="200" x2="80" y2="240" stroke="#ef5350"/><rect x="73" y="210" width="14" height="20" fill="#ef5350"/>
+      <line x1="115" y1="210" x2="115" y2="245" stroke="#ef5350"/><rect x="108" y="220" width="14" height="20" fill="#ef5350"/>
+      <line x1="160" y1="200" x2="160" y2="270" stroke="#ef5350"/><rect x="153" y="220" width="14" height="20" fill="#ef5350"/>
+      <path d="M 175 265 L 200 275 L 195 270 L 205 270 L 205 280 L 195 280 L 200 285 Z" fill="#ec4899"/>
+      <text x="212" y="275" fill="#f472b6" font-size="11" font-weight="700">SWEEP</text>
+      <line x1="205" y1="210" x2="205" y2="240" stroke="#26a69a"/><rect x="198" y="220" width="14" height="15" fill="#26a69a"/>
+      <line x1="240" y1="200" x2="240" y2="225" stroke="#ef5350"/><rect x="233" y="205" width="14" height="20" fill="#ef5350"/>
+      <line x1="275" y1="195" x2="275" y2="220" stroke="#26a69a"/><rect x="268" y="200" width="14" height="20" fill="#26a69a"/>
+      <line x1="310" y1="180" x2="310" y2="210" stroke="#26a69a"/><rect x="303" y="185" width="14" height="20" fill="#26a69a"/>
+      <line x1="345" y1="165" x2="345" y2="195" stroke="#26a69a"/><rect x="338" y="170" width="14" height="20" fill="#26a69a"/>
+      <line x1="380" y1="80" x2="380" y2="170" stroke="#26a69a"/><rect x="373" y="85" width="14" height="65" fill="#26a69a"/>
+      <path d="M 395 95 L 425 88 L 420 93 L 430 93 L 430 103 L 420 103 L 425 108 Z" fill="#fbbf24"/>
+      <text x="438" y="98" fill="#fcd34d" font-size="11" font-weight="800">CHoCH at bar 6</text>
+      <line x1="160" y1="305" x2="345" y2="305" stroke="#fbbf24" stroke-width="2" stroke-dasharray="4,2"/>
+      <text x="252" y="320" text-anchor="middle" fill="#fbbf24" font-size="10" font-weight="700">5-bar window EXPIRED ✗ → no +3 bonus</text>
+      <circle cx="160" cy="290" r="9" fill="#7c2d12" stroke="#fb923c"/><text x="160" y="294" text-anchor="middle" fill="#fed7aa" font-size="10" font-weight="700">0</text>
+      <circle cx="380" cy="290" r="9" fill="#7c2d12" stroke="#fbbf24"/><text x="380" y="294" text-anchor="middle" fill="#fde68a" font-size="10" font-weight="700">6</text>
+    </svg>
+    <div class="scorecard">
+      <h4>⚠ Why NOT A++</h4>
+      <table>
+        <tr><td>Score (with sweep→CHoCH bonus)</td><td><span class="miss">16 / 18 — bonus DENIED</span></td></tr>
+        <tr><td>Score (without bonus)</td><td><span class="check">13 / 18</span></td></tr>
+        <tr><td>HTF count</td><td><span class="check">5 / 6 ✓</span></td></tr>
+        <tr><td>Sweep→CHoCH ≤5 bars</td><td><span class="miss">6 bars ✗</span></td></tr>
+        <tr><td>RR</td><td><span class="check">1 : 3.2 ✓</span></td></tr>
+        <tr><td>Verdict</td><td><span class="miss">A+ tier (13/18) — smaller size</span></td></tr>
+      </table>
+    </div>
+    <div class="description">
+      <span class="step warn">CHoCH eventually fired but at bar 6 — outside the 5-bar institutional reversal window</span>
+      <span class="step warn">Without the +3 sweep→CHoCH bonus, score drops below A++ threshold (14)</span>
+      <span class="step warn">The setup is still tradeable as A+ tier IF score remains ≥ 12 — here 13/18 qualifies</span>
+      <strong style="color:#fcd34d">→ Don't take this as A++. Either step down to A+ (smaller size) or skip if your conviction is shaky.</strong>
+      <span class="pidgin">The CHoCH dey come, but e late — bar 6 don pass the 5-bar window. So no A++ bonus. You fit still trade am as A+ but no go full size like A++. Better small win than chase wetin no qualify.</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================================== -->
+<!-- ===================== SECTION: A+ VALID + INVALIDATION ======================= -->
+<!-- ============================================================================== -->
+
+<div class="section-header aplus">
+  <h2>A+ TIER · Strong Edge (No sweep→CHoCH required)</h2>
+  <span class="badge">SCORE 12+/18 · HTF 5+/6 · RR 1:3+ · ALL KILLZONES</span>
+</div>
+
+<div class="grid">
+
+  <!-- A+ VALID -->
+  <div class="scenario valid-aplus">
+    <h2>📊 A+ Scenario 1 — Valid (Take Standard Size)</h2>
+    <span class="verdict">✓ TAKE — A+ SIGNAL</span>
+    <svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#475569"/>
+      <text x="300" y="18" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="800">EURUSD · 5M · LONDON · A+ BUY · 13/18 · HTF 5/6</text>
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332"/>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" opacity="0.7"/>
+      <text x="48" y="114" fill="#60a5fa" font-size="10" font-weight="600">1H STRUCTURE LEVEL</text>
+      <rect x="40" y="220" width="520" height="22" fill="#22c55e" opacity="0.15"/>
+      <text x="48" y="234" fill="#86efac" font-size="10" font-weight="600">📦 1H DEMAND OB (clean rejection)</text>
+      <line x1="80" y1="180" x2="80" y2="215" stroke="#ef5350"/><rect x="73" y="190" width="14" height="20" fill="#ef5350"/>
+      <line x1="115" y1="200" x2="115" y2="232" stroke="#ef5350"/><rect x="108" y="210" width="14" height="20" fill="#ef5350"/>
+      <line x1="150" y1="210" x2="150" y2="240" stroke="#ef5350"/><rect x="143" y="220" width="14" height="18" fill="#ef5350"/>
+      <line x1="200" y1="215" x2="200" y2="245" stroke="#ef5350"/><rect x="193" y="225" width="14" height="13" fill="#ef5350"/>
+      <line x1="240" y1="200" x2="240" y2="235" stroke="#26a69a"/><rect x="233" y="210" width="14" height="20" fill="#26a69a"/>
+      <line x1="280" y1="170" x2="280" y2="210" stroke="#26a69a"/><rect x="273" y="180" width="14" height="20" fill="#26a69a"/>
+      <line x1="320" y1="140" x2="320" y2="180" stroke="#26a69a"/><rect x="313" y="145" width="14" height="25" fill="#26a69a"/>
+      <line x1="365" y1="100" x2="365" y2="145" stroke="#26a69a"/><rect x="358" y="105" width="14" height="35" fill="#26a69a"/>
+      <path d="M 380 110 L 410 105 L 405 110 L 415 110 L 415 120 L 405 120 L 410 125 Z" fill="#22c55e"/>
+      <text x="425" y="115" fill="#86efac" font-size="12" font-weight="700">CHoCH ▲</text>
+      <text x="425" y="128" fill="#cbd5e1" font-size="9">Clean rejection from OB</text>
+      <text x="100" y="280" fill="#94a3b8" font-size="10" font-weight="600">→ NO sweep before CHoCH (no liquidity grab)</text>
+      <text x="100" y="295" fill="#94a3b8" font-size="10">→ Still strong: clean OB rejection + structure flip</text>
+    </svg>
+    <div class="scorecard">
+      <h4>🎯 Why A+</h4>
+      <table>
+        <tr><td>Score</td><td><span class="check">13 / 18 ✓</span></td></tr>
+        <tr><td>HTF count</td><td><span class="check">5 / 6 ✓</span></td></tr>
+        <tr><td>Sweep→CHoCH</td><td style="color:#94a3b8">N/A (no sweep — that's OK for A+)</td></tr>
+        <tr><td>RR</td><td><span class="check">1 : 3.2 ✓</span></td></tr>
+        <tr><td>Killzone</td><td><span class="check">London ✓</span></td></tr>
+        <tr><td>Verdict</td><td style="color:#cbd5e1; font-weight:700;">TAKE A+ (standard size)</td></tr>
+      </table>
+    </div>
+    <div class="description">
+      <span class="step silver">No sweep happened — but a clean rejection of the 1H demand OB IS a valid A+ structure</span>
+      <span class="step silver">CHoCH on 5M after the rejection confirms structure flip without liquidity grab first</span>
+      <span class="step silver">Score 13/18 (above A+ threshold of 12), HTF 5/6, RR 1:3.2 — all minimums met</span>
+      <strong style="color:#cbd5e1">→ A solid A+ trade. Smaller size than A++ (no +3 bonus, lower edge), but still take.</strong>
+      <span class="pidgin">No sweep happen, but the rejection from the demand OB strong well-well. CHoCH come quick, structure flip. Na A+, no be A++ — so go small size, but trade am still. Money still go enter pocket.</span>
+    </div>
+  </div>
+
+  <!-- A+ INVALID — HTF count drops to 4 -->
+  <div class="scenario invalid">
+    <h2>✗ A+ Invalidation — HTF count drops to 4/6</h2>
+    <span class="verdict">✗ NOT A+ — DOWNGRADE TO B+ (or skip)</span>
+    <svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#7f1d1d"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">EURUSD · 5M · 1H STRUCTURE UNCLEAR · HTF 4/6</text>
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332"/>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#1a2332"/>
+      <line x1="40" y1="100" x2="560" y2="100" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" opacity="0.4"/>
+      <text x="48" y="94" fill="#60a5fa" font-size="10" font-weight="600" opacity="0.5">1H STRUCTURE — choppy / unclear</text>
+      <text x="48" y="74" fill="#f87171" font-size="11" font-weight="700">⚠ 4H bull but 1H structure ambiguous</text>
+      <line x1="80" y1="170" x2="80" y2="200" stroke="#ef5350"/><rect x="73" y="180" width="14" height="15" fill="#ef5350"/>
+      <line x1="115" y1="160" x2="115" y2="195" stroke="#26a69a"/><rect x="108" y="170" width="14" height="20" fill="#26a69a"/>
+      <line x1="150" y1="170" x2="150" y2="200" stroke="#ef5350"/><rect x="143" y="180" width="14" height="15" fill="#ef5350"/>
+      <line x1="190" y1="165" x2="190" y2="200" stroke="#26a69a"/><rect x="183" y="175" width="14" height="20" fill="#26a69a"/>
+      <line x1="230" y1="180" x2="230" y2="220" stroke="#ef5350"/><rect x="223" y="190" width="14" height="20" fill="#ef5350"/>
+      <line x1="270" y1="170" x2="270" y2="205" stroke="#26a69a"/><rect x="263" y="180" width="14" height="20" fill="#26a69a"/>
+      <line x1="310" y1="160" x2="310" y2="195" stroke="#26a69a"/><rect x="303" y="170" width="14" height="20" fill="#26a69a"/>
+      <line x1="350" y1="125" x2="350" y2="170" stroke="#26a69a"/><rect x="343" y="135" width="14" height="30" fill="#26a69a"/>
+      <path d="M 365 135 L 395 130 L 390 135 L 400 135 L 400 145 L 390 145 L 395 150 Z" fill="#22c55e"/>
+      <text x="408" y="140" fill="#86efac" font-size="11" font-weight="700">CHoCH ▲ (weak)</text>
+      <rect x="60" y="290" width="500" height="30" fill="#7f1d1d" rx="4"/>
+      <text x="300" y="308" text-anchor="middle" fill="#fecaca" font-size="11" font-weight="700">⚠ HTF 4/6 = below A+ threshold (5+) → A+ disqualified</text>
+    </svg>
+    <div class="scorecard">
+      <h4>⚠ Why NOT A+</h4>
+      <table>
+        <tr><td>Score</td><td><span class="check">12 / 18 ✓</span></td></tr>
+        <tr><td>HTF count</td><td><span class="miss">4 / 6 ✗ (need 5+)</span></td></tr>
+        <tr><td>Why HTF dropped</td><td style="color:#f87171">1H structure choppy, no clear bias</td></tr>
+        <tr><td>RR</td><td><span class="check">1 : 3 ✓</span></td></tr>
+        <tr><td>Eligible for B+?</td><td style="color:#fdba74">Yes (score 12, HTF 4 fits B+ range)</td></tr>
+        <tr><td>Verdict</td><td><span class="miss">B+ tier — small size or skip</span></td></tr>
+      </table>
+    </div>
+    <div class="description">
+      <span class="step warn">4H bias is bullish but 1H structure is choppy — no clean BOS/CHoCH on 1H</span>
+      <span class="step warn">15M and 5M trigger fired but the higher-TF foundation is weak</span>
+      <span class="step warn">HTF count drops to 4 because the 1H structure component fails — A+ requires 5+</span>
+      <strong style="color:#fcd34d">→ Drop to B+ tier (HTF 3-4 acceptable) with smaller size, OR skip per playbook section 6 ("A+ trades only this month, B+ after stats prove edge").</strong>
+      <span class="pidgin">4H wan bull, but 1H dey play yo-yo. Structure no clear, so HTF count drop reach 4. To trade A+ you need 5/6 minimum. You fit trade as B+, but if you never log 30 trades yet, just skip — no force am.</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================================== -->
+<!-- ===================== SECTION: B+ VALID + INVALIDATIONS ====================== -->
+<!-- ============================================================================== -->
+
+<div class="section-header bplus">
+  <h2>B+ TIER · Acceptable Edge (Caution: skipped in NY PM and Asia)</h2>
+  <span class="badge">SCORE 9+/18 · HTF 3-4/6 · RR 1:3+ · LONDON & NY AM ONLY</span>
+</div>
+
+<div class="grid">
+
+  <!-- B+ VALID -->
+  <div class="scenario valid-bplus">
+    <h2>📦 B+ Scenario 1 — Valid (Smaller Size)</h2>
+    <span class="verdict">✓ TAKE — B+ SIGNAL (after 30+ logged trades)</span>
+    <svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#c2410c"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fed7aa" font-size="13" font-weight="800">NQ · 5M · LONDON · B+ BUY · 10/18 · HTF 3/6</text>
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332"/>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#1a2332"/>
+      <rect x="40" y="200" width="520" height="22" fill="#22c55e" opacity="0.12"/>
+      <text x="48" y="214" fill="#86efac" font-size="10" font-weight="600">📦 15M Demand Zone</text>
+      <line x1="80" y1="160" x2="80" y2="195" stroke="#ef5350"/><rect x="73" y="170" width="14" height="20" fill="#ef5350"/>
+      <line x1="115" y1="170" x2="115" y2="200" stroke="#ef5350"/><rect x="108" y="180" width="14" height="15" fill="#ef5350"/>
+      <line x1="150" y1="180" x2="150" y2="218" stroke="#ef5350"/><rect x="143" y="195" width="14" height="20" fill="#ef5350"/>
+      <line x1="190" y1="190" x2="190" y2="220" stroke="#26a69a"/><rect x="183" y="200" width="14" height="15" fill="#26a69a"/>
+      <line x1="230" y1="170" x2="230" y2="200" stroke="#26a69a"/><rect x="223" y="180" width="14" height="20" fill="#26a69a"/>
+      <line x1="270" y1="150" x2="270" y2="180" stroke="#26a69a"/><rect x="263" y="155" width="14" height="20" fill="#26a69a"/>
+      <line x1="310" y1="125" x2="310" y2="160" stroke="#26a69a"/><rect x="303" y="130" width="14" height="25" fill="#26a69a"/>
+      <path d="M 325 135 L 355 130 L 350 135 L 360 135 L 360 145 L 350 145 L 355 150 Z" fill="#fb923c"/>
+      <text x="368" y="140" fill="#fdba74" font-size="11" font-weight="700">Small CHoCH ▲</text>
+      <text x="48" y="280" fill="#fdba74" font-size="10" font-weight="600">→ Lower-edge structure, but minimums met</text>
+      <text x="48" y="295" fill="#cbd5e1" font-size="9">→ No sweep · Score 10/18 · HTF 3/6 · RR 1:3</text>
+    </svg>
+    <div class="scorecard">
+      <h4>🎯 Why B+</h4>
+      <table>
+        <tr><td>Score</td><td><span class="check">10 / 18 ✓ (above B+ threshold 9)</span></td></tr>
+        <tr><td>HTF count</td><td><span class="check">3 / 6 ✓ (B+ range 3-4)</span></td></tr>
+        <tr><td>Sweep→CHoCH</td><td style="color:#94a3b8">Not required for B+</td></tr>
+        <tr><td>RR</td><td><span class="check">1 : 3 ✓ (exactly minimum)</span></td></tr>
+        <tr><td>Killzone</td><td><span class="check">London ✓ (B+ allowed here)</span></td></tr>
+        <tr><td>Verdict</td><td style="color:#fdba74; font-weight:700;">TAKE B+ ½ position size</td></tr>
+      </table>
+    </div>
+    <div class="description">
+      <span class="step bronze">Pullback into 15M demand zone, basic structure rejection</span>
+      <span class="step bronze">Score 10/18 — meets minimum, but no high-confluence stack</span>
+      <span class="step bronze">HTF 3/6 — 4H bias + 15M zone + 5M trigger; 1H structure unclear; EMA + RSI not aligned</span>
+      <strong style="color:#fdba74">→ Tradeable B+ but ONLY after you've logged 30+ trades. Until then, B+ flagged but skipped per playbook section 6. If you take it, ½ position size to limit damage if edge isn't there yet.</strong>
+      <span class="pidgin">B+ na the entry-level setup. Score just dey reach minimum (10/18), HTF 3/6 — no over-strong but e qualify. If you don get 30+ trade history, fit trade am with half size. If you new, just look am, no enter — trade A+ and A++ first till you sabi.</span>
+    </div>
+  </div>
+
+  <!-- B+ INVALID — NY PM session -->
+  <div class="scenario invalid">
+    <h2>✗ B+ Invalidation — NY PM session</h2>
+    <span class="verdict">✗ SKIP — KILLZONE GATE</span>
+    <svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#7f1d1d"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">XAUUSD · 5M · NY PM (14:30 ET) · B+ BUY ATTEMPT</text>
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332"/>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#1a2332"/>
+      <rect x="40" y="200" width="520" height="22" fill="#22c55e" opacity="0.12"/>
+      <text x="48" y="214" fill="#86efac" font-size="10" font-weight="600">📦 15M Demand Zone (would qualify in London)</text>
+      <line x1="80" y1="170" x2="80" y2="200" stroke="#ef5350"/><rect x="73" y="180" width="14" height="15" fill="#ef5350"/>
+      <line x1="115" y1="180" x2="115" y2="215" stroke="#ef5350"/><rect x="108" y="190" width="14" height="20" fill="#ef5350"/>
+      <line x1="155" y1="190" x2="155" y2="225" stroke="#ef5350"/><rect x="148" y="200" width="14" height="20" fill="#ef5350"/>
+      <line x1="200" y1="180" x2="200" y2="215" stroke="#26a69a"/><rect x="193" y="190" width="14" height="20" fill="#26a69a"/>
+      <line x1="240" y1="155" x2="240" y2="195" stroke="#26a69a"/><rect x="233" y="160" width="14" height="30" fill="#26a69a"/>
+      <line x1="285" y1="130" x2="285" y2="165" stroke="#26a69a"/><rect x="278" y="135" width="14" height="25" fill="#26a69a"/>
+      <path d="M 300 140 L 330 135 L 325 140 L 335 140 L 335 150 L 325 150 L 330 155 Z" fill="#fb923c"/>
+      <text x="343" y="145" fill="#fdba74" font-size="10" font-weight="700">CHoCH (B+ structure)</text>
+      <rect x="60" y="280" width="500" height="40" fill="#7f1d1d" rx="4"/>
+      <text x="300" y="298" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">⚠ KILLZONE GATE: NY PM = A+ ONLY (rule 2)</text>
+      <text x="300" y="313" text-anchor="middle" fill="#fca5a5" font-size="11">B+ skipped — afternoon volatility too thin/choppy for lower-edge setups</text>
+    </svg>
+    <div class="scorecard">
+      <h4>⚠ Why SKIP</h4>
+      <table>
+        <tr><td>Score / HTF / RR</td><td><span class="check">All meet B+ minimums ✓</span></td></tr>
+        <tr><td>Current killzone</td><td><span class="miss">NY PM (14:30 ET)</span></td></tr>
+        <tr><td>Rule 2: NY PM allows</td><td style="color:#fca5a5">A+ tier only — B+ excluded</td></tr>
+        <tr><td>Why excluded</td><td style="color:#fcd34d">NY PM volatility = thin, choppy, low follow-through</td></tr>
+        <tr><td>Verdict</td><td><span class="miss">SKIP regardless of structure</span></td></tr>
+      </table>
+    </div>
+    <div class="description">
+      <span class="step warn">The structure is fine — same setup in London or NY AM would be a valid B+</span>
+      <span class="step warn">But NY PM (13:30-16:00 ET) is restricted to A+ only per rule 2</span>
+      <span class="step warn">Reason: afternoon US session has thinner participation, more chop, more false breakouts</span>
+      <strong style="color:#fcd34d">→ Even though score and structure qualify, the killzone gate is BLOCKING. SKIP. Wait for tomorrow's NY AM or take A+ tier setups only this afternoon.</strong>
+      <span class="pidgin">Setup good, but time no good. NY PM (afternoon) get plenty whipsaw, dem dey hunt stops. Rule 2 say A+ only for afternoon. Even if structure clean, you no fit force B+. Wait till tomorrow morning or take only A+ this PM.</span>
+    </div>
+  </div>
+
+  <!-- B+ INVALID — Asia session without nested HTF -->
+  <div class="scenario invalid">
+    <h2>✗ B+ Invalidation — Asia session</h2>
+    <span class="verdict">✗ SKIP — A+ ONLY IN ASIA</span>
+    <svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#7f1d1d"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">XAUUSD · 5M · ASIA (22:00 ET) · B+ BUY ATTEMPT</text>
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332"/>
+      <line x1="40" y1="240" x2="560" y2="240" stroke="#1a2332"/>
+      <text x="48" y="64" fill="#9ca3af" font-size="11" font-weight="600">🌏 Asia session — quieter, nested HTF required for any trade</text>
+      <line x1="80" y1="180" x2="80" y2="210" stroke="#ef5350"/><rect x="73" y="190" width="14" height="15" fill="#ef5350"/>
+      <line x1="115" y1="170" x2="115" y2="205" stroke="#26a69a"/><rect x="108" y="180" width="14" height="20" fill="#26a69a"/>
+      <line x1="150" y1="180" x2="150" y2="215" stroke="#ef5350"/><rect x="143" y="190" width="14" height="20" fill="#ef5350"/>
+      <line x1="190" y1="175" x2="190" y2="210" stroke="#26a69a"/><rect x="183" y="185" width="14" height="20" fill="#26a69a"/>
+      <line x1="230" y1="170" x2="230" y2="205" stroke="#ef5350"/><rect x="223" y="180" width="14" height="20" fill="#ef5350"/>
+      <line x1="270" y1="160" x2="270" y2="195" stroke="#26a69a"/><rect x="263" y="170" width="14" height="20" fill="#26a69a"/>
+      <line x1="310" y1="150" x2="310" y2="185" stroke="#26a69a"/><rect x="303" y="155" width="14" height="25" fill="#26a69a"/>
+      <line x1="350" y1="130" x2="350" y2="160" stroke="#26a69a"/><rect x="343" y="135" width="14" height="20" fill="#26a69a"/>
+      <text x="48" y="270" fill="#fdba74" font-size="10" font-weight="600">→ Score 10/18, HTF 3/6 — would be valid B+ in London</text>
+      <rect x="60" y="285" width="500" height="40" fill="#7f1d1d" rx="4"/>
+      <text x="300" y="303" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">⚠ ASIA KILLZONE: A+ ONLY (rule 2 + section 4b)</text>
+      <text x="300" y="318" text-anchor="middle" fill="#fca5a5" font-size="11">Asia requires extra HTF nest — B+ insufficient confluence for thin liquidity</text>
+    </svg>
+    <div class="scorecard">
+      <h4>⚠ Why SKIP</h4>
+      <table>
+        <tr><td>Score / HTF / RR</td><td><span class="check">B+ minimums met ✓</span></td></tr>
+        <tr><td>Current killzone</td><td><span class="miss">Asia (22:00 ET)</span></td></tr>
+        <tr><td>Rule 2: Asia allows</td><td style="color:#fca5a5">A+ only with extra HTF filter</td></tr>
+        <tr><td>Section 4b extra filter</td><td style="color:#fca5a5">Strong nested HTF + sweep required</td></tr>
+        <tr><td>Why stricter</td><td style="color:#fcd34d">Asia = thin liquidity, choppy ranges, false moves</td></tr>
+        <tr><td>Verdict</td><td><span class="miss">SKIP — wait for London open</span></td></tr>
+      </table>
+    </div>
+    <div class="description">
+      <span class="step warn">Asia killzone (20:00-01:00 ET) has thinner liquidity, more false moves, less follow-through</span>
+      <span class="step warn">Playbook section 4b: Asia requires "strong nested HTF + sweep" — B+ doesn't meet that bar</span>
+      <span class="step warn">A+ tier setups are allowed in Asia ONLY if they have extra HTF confluence</span>
+      <strong style="color:#fcd34d">→ Even if structure qualifies as B+ on 5M, the session gate prevents the trade. SKIP and wait for London open at 02:00 ET.</strong>
+      <span class="pidgin">Asia time too quiet — liquidity thin, fake breakouts plenty. Only A+ wey get strong nested HTF dey work for there. Your B+ no qualify. Just sleep small, London go open soon.</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================================== -->
+<!-- ===================== SECTION: UNIVERSAL INVALIDATIONS ======================= -->
+<!-- ============================================================================== -->
+
+<div class="section-header universal">
+  <h2>🛑 UNIVERSAL INVALIDATIONS · Apply to ALL Tiers</h2>
+  <span class="badge">REGARDLESS OF TIER, THESE ALWAYS BLOCK A TRADE</span>
+</div>
+
+<div class="grid">
+
+  <!-- Universal: 2 daily losses -->
+  <div class="scenario universal-invalid">
+    <h2>🛑 Block #1 — 2 Daily Losses Already</h2>
+    <span class="verdict">✗ SKIP — RULE 5 (DAILY LIMIT)</span>
+    <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#7f1d1d"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">DAILY LOSS LIMIT REACHED — STOP FOR THE DAY</text>
+      <rect x="50" y="60" width="160" height="60" fill="#7f1d1d" rx="6"/>
+      <text x="130" y="85" text-anchor="middle" fill="#fecaca" font-size="14" font-weight="800">Loss #1</text>
+      <text x="130" y="105" text-anchor="middle" fill="#fca5a5" font-size="11">XAUUSD · -1.0R · 09:45 ET</text>
+      <rect x="220" y="60" width="160" height="60" fill="#7f1d1d" rx="6"/>
+      <text x="300" y="85" text-anchor="middle" fill="#fecaca" font-size="14" font-weight="800">Loss #2</text>
+      <text x="300" y="105" text-anchor="middle" fill="#fca5a5" font-size="11">XAUUSD · -1.0R · 11:20 ET</text>
+      <rect x="390" y="60" width="160" height="60" fill="#fbbf24" rx="6"/>
+      <text x="470" y="85" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="800">SHUT DOWN</text>
+      <text x="470" y="105" text-anchor="middle" fill="#1a1a1a" font-size="10">Even if A++ appears!</text>
+      <text x="300" y="160" text-anchor="middle" fill="#fdba74" font-size="13" font-weight="700">→ Close the chart. No more trades today. Resume tomorrow.</text>
+    </svg>
+    <div class="description">
+      <strong style="color:#fca5a5">Rule 5: 2 losses → stop trading for the day.</strong>
+      <span class="step warn">Even if a clean A++ setup appears 30 min later — SKIP. The rule isn't "stop after 3" or "stop if down a lot" — it's exactly 2 losses, every time.</span>
+      <span class="step warn">This protects against revenge trading and tilt cascades. Your edge in trade #3 is statistically lower than trades 1-2 because emotional state degrades.</span>
+      <span class="pidgin">Two loss don dey daily limit. No matter wetin you see for chart, close am. Even if A++ pop up, leave am. Tomorrow go come — your money go still dey there. Today don finish, take rest.</span>
+    </div>
+  </div>
+
+  <!-- Universal: News event -->
+  <div class="scenario universal-invalid">
+    <h2>🛑 Block #2 — News Event Within 30 min</h2>
+    <span class="verdict">✗ SKIP — RULE 4</span>
+    <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#7f1d1d"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">HIGH-IMPACT NEWS WITHIN 30 MIN</text>
+      <rect x="50" y="60" width="500" height="100" fill="#1a2332" rx="8" stroke="#fb7185" stroke-width="2"/>
+      <text x="60" y="85" fill="#fbbf24" font-size="14" font-weight="800">📅 Today's Schedule (ET)</text>
+      <line x1="60" y1="95" x2="540" y2="95" stroke="#374151"/>
+      <text x="70" y="115" fill="#fca5a5" font-size="12">⚠ 08:30 ET — US CPI Release</text>
+      <text x="70" y="135" fill="#fca5a5" font-size="12">⚠ 14:00 ET — FOMC Minutes</text>
+      <text x="70" y="155" fill="#cbd5e1" font-size="11">→ Block trades 08:00-09:00 and 13:30-14:30 (30-min before/after)</text>
+    </svg>
+    <div class="description">
+      <strong style="color:#fca5a5">Rule 4: No entries within 30 minutes of NFP / CPI / FOMC / FOMC minutes.</strong>
+      <span class="step warn">News spikes break technical structure — even institutional levels get blown through</span>
+      <span class="step warn">Spreads widen 5-20× during release. Even if your trade direction is "right," slippage destroys RR</span>
+      <span class="step warn">Wait at least 30 min AFTER the release for the initial reaction to settle</span>
+      <span class="pidgin">News time, market dey craze. CPI, NFP, FOMC — even sharp setup go fly through your stop loss. Spread go wide like Lagos pothole. Wait small after the news, market go calm down.</span>
+    </div>
+  </div>
+
+  <!-- Universal: Both bull and bear zones active -->
+  <div class="scenario universal-invalid">
+    <h2>🛑 Block #3 — Both Bull AND Bear Zones Active</h2>
+    <span class="verdict">✗ SKIP — RULE 4 (UNDECIDED MARKET)</span>
+    <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#7f1d1d"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">CONFLICTING ZONES — MARKET UNDECIDED</text>
+      <line x1="40" y1="60" x2="560" y2="60" stroke="#1a2332"/>
+      <line x1="40" y1="120" x2="560" y2="120" stroke="#1a2332"/>
+      <line x1="40" y1="180" x2="560" y2="180" stroke="#1a2332"/>
+      <rect x="40" y="80" width="520" height="22" fill="#ef5350" opacity="0.18"/>
+      <text x="48" y="94" fill="#fca5a5" font-size="10" font-weight="600">🔴 1H Supply OB (active)</text>
+      <rect x="40" y="160" width="520" height="22" fill="#22c55e" opacity="0.18"/>
+      <text x="48" y="174" fill="#86efac" font-size="10" font-weight="600">🟢 1H Demand OB (active)</text>
+      <line x1="80" y1="110" x2="80" y2="160" stroke="#ef5350"/><rect x="73" y="120" width="14" height="30" fill="#ef5350"/>
+      <line x1="115" y1="100" x2="115" y2="155" stroke="#26a69a"/><rect x="108" y="110" width="14" height="35" fill="#26a69a"/>
+      <line x1="150" y1="115" x2="150" y2="165" stroke="#ef5350"/><rect x="143" y="125" width="14" height="30" fill="#ef5350"/>
+      <line x1="190" y1="105" x2="190" y2="155" stroke="#26a69a"/><rect x="183" y="115" width="14" height="30" fill="#26a69a"/>
+      <text x="300" y="220" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="700">⚠ Both zones unmitigated, price ping-pong → no directional edge</text>
+    </svg>
+    <div class="description">
+      <strong style="color:#fca5a5">Rule 4 (skip list): "Both bull and bear zones active simultaneously = market undecided."</strong>
+      <span class="step warn">When both demand and supply OBs are active and unmitigated, price oscillates between them</span>
+      <span class="step warn">Either side could "win" — until one zone gets decisively broken, no directional bias exists</span>
+      <span class="step warn">Trading either side here = 50/50 coin flip with spread cost — negative expectancy</span>
+      <span class="pidgin">Buyers and sellers dey fight pass. Two zones active, market dey waka up and down. Until one side win, you dey gamble. Wait till market choose direction, then trade that side. No be lottery.</span>
+    </div>
+  </div>
+
+  <!-- Universal: RSI BLOCK -->
+  <div class="scenario universal-invalid">
+    <h2>🛑 Block #4 — Indicator Shows RSI BLOCK</h2>
+    <span class="verdict">✗ SKIP — DASHBOARD RED FLAG</span>
+    <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="600" height="28" fill="#7f1d1d"/>
+      <text x="300" y="18" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">PINE V5.2 DASHBOARD: RSI BLOCK</text>
+      <rect x="60" y="50" width="480" height="120" fill="#0f1419" rx="6" stroke="#374151"/>
+      <text x="70" y="75" fill="#9ca3af" font-size="11" font-weight="600">v5.2 Top-Right Dashboard:</text>
+      <text x="70" y="100" fill="#86efac" font-size="13" font-weight="700">✓ Score: 14/18</text>
+      <text x="70" y="120" fill="#86efac" font-size="13" font-weight="700">✓ HTF: 5/6</text>
+      <text x="70" y="140" fill="#86efac" font-size="13" font-weight="700">✓ Sweep→CHoCH: ✓ (3 bars)</text>
+      <rect x="285" y="125" width="240" height="30" fill="#7f1d1d" rx="4"/>
+      <text x="405" y="145" text-anchor="middle" fill="#fecaca" font-size="14" font-weight="800">⚠ RSI: BLOCK</text>
+    </svg>
+    <div class="description">
+      <strong style="color:#fca5a5">Rule 4: "RSI cell shows BLOCK" → no trade.</strong>
+      <span class="step warn">The Pine v5.2 dashboard shows multiple confluence cells. RSI BLOCK fires when RSI is in extreme territory (overbought for buys, oversold for sells)</span>
+      <span class="step warn">Means the move is exhausted — buying near tops or selling near bottoms = mean reversion against you</span>
+      <span class="step warn">Even with a 14/18 A++-eligible setup, RSI BLOCK overrides — wait for RSI to reset</span>
+      <span class="pidgin">Even if everything else perfect, when RSI dey extreme, the move don tire. Buying for top or selling for bottom — na the way to lose money. Wait small, RSI go cool down, then enter.</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================================== -->
+<!-- ===================== DECISION MATRIX ======================================== -->
+<!-- ============================================================================== -->
+
+<div class="decision-matrix">
+  <h2>📋 Master Decision Matrix — Tier vs Conditions</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Condition</th>
+        <th>A++</th>
+        <th>A+</th>
+        <th>B+</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Score requirement</td>
+        <td>≥ 14 / 18</td>
+        <td>≥ 12 / 18</td>
+        <td>≥ 9 / 18</td>
+      </tr>
+      <tr>
+        <td>HTF count</td>
+        <td>≥ 5 / 6</td>
+        <td>≥ 5 / 6</td>
+        <td>3-4 / 6</td>
+      </tr>
+      <tr>
+        <td>Sweep→CHoCH within 5 bars</td>
+        <td><span class="ok">REQUIRED</span></td>
+        <td>Optional</td>
+        <td>Not required</td>
+      </tr>
+      <tr>
+        <td>Min RR</td>
+        <td>1 : 3</td>
+        <td>1 : 3</td>
+        <td>1 : 3</td>
+      </tr>
+      <tr>
+        <td>Asia killzone</td>
+        <td><span class="ok">YES</span> (with nested HTF)</td>
+        <td><span class="ok">YES</span> (with nested HTF)</td>
+        <td><span class="skip">SKIP</span></td>
+      </tr>
+      <tr>
+        <td>London killzone</td>
+        <td><span class="ok">YES</span></td>
+        <td><span class="ok">YES</span></td>
+        <td><span class="ok">YES</span></td>
+      </tr>
+      <tr>
+        <td>NY AM killzone</td>
+        <td><span class="ok">YES</span></td>
+        <td><span class="ok">YES</span></td>
+        <td><span class="ok">YES</span></td>
+      </tr>
+      <tr>
+        <td>NY PM killzone</td>
+        <td><span class="ok">YES</span></td>
+        <td><span class="ok">YES</span></td>
+        <td><span class="skip">SKIP</span></td>
+      </tr>
+      <tr>
+        <td>Off-hours (any time)</td>
+        <td><span class="skip">SKIP</span></td>
+        <td><span class="skip">SKIP</span></td>
+        <td><span class="skip">SKIP</span></td>
+      </tr>
+      <tr>
+        <td>2+ daily losses</td>
+        <td><span class="skip">SKIP</span></td>
+        <td><span class="skip">SKIP</span></td>
+        <td><span class="skip">SKIP</span></td>
+      </tr>
+      <tr>
+        <td>News within 30 min</td>
+        <td><span class="skip">SKIP</span></td>
+        <td><span class="skip">SKIP</span></td>
+        <td><span class="skip">SKIP</span></td>
+      </tr>
+      <tr>
+        <td>Both zones active</td>
+        <td><span class="skip">SKIP</span></td>
+        <td><span class="skip">SKIP</span></td>
+        <td><span class="skip">SKIP</span></td>
+      </tr>
+      <tr>
+        <td>RSI BLOCK</td>
+        <td><span class="skip">SKIP</span></td>
+        <td><span class="skip">SKIP</span></td>
+        <td><span class="skip">SKIP</span></td>
+      </tr>
+      <tr style="background:#0f1419;">
+        <td><strong style="color:#fde047">Position size</strong></td>
+        <td><strong style="color:#fde047">FULL (1% risk)</strong></td>
+        <td><strong style="color:#cbd5e1">STANDARD (1% risk)</strong></td>
+        <td><strong style="color:#fdba74">REDUCED (0.5% risk) until edge proven</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ====================== KEY TAKEAWAY ====================== -->
+<div class="key-takeaway">
+  ⭐ <strong>A++</strong> = sweep→CHoCH ≤ 5 bars + score ≥ 14 + HTF ≥ 5 → <em>full size</em> &nbsp;|&nbsp;
+  📊 <strong>A+</strong> = score ≥ 12 + HTF ≥ 5 → <em>standard size</em> &nbsp;|&nbsp;
+  📦 <strong>B+</strong> = score ≥ 9 + HTF 3-4 + London/NY AM only → <em>half size after 30+ logged trades</em>
+</div>
+
+<div class="footer">
+  CALLISTOFX SMC · GAMMA NAIJA TRADING SYSTEM · Tier Decision Reference · Pine v5.2 Section 14 · Playbook Section 6
+</div>
+
+</body>
+</html>
