@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 5 — Conviction-Aware Decisions · seyilistofx v5.5.2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
+    color: #e6e9ef;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .header {
+    text-align: center;
+    padding: 32px 24px;
+    background: linear-gradient(90deg, #1e3a5f 0%, #4a3c2a 50%, #1e3a5f 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    margin-bottom: 28px;
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #9C27B0, #fbbf24, #22c55e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    font-size: 13px;
+    color: #9ca3af;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .intro {
+    background: #1a2332;
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+    border: 2px solid #06b6d4;
+  }
+  .intro h2 { color: #22d3ee; font-size: 20px; margin-bottom: 12px; }
+  .intro p { color: #cbd5e1; line-height: 1.7; font-size: 14px; margin-bottom: 12px; }
+  .intro p strong { color: #fde047; }
+  .matrix-box {
+    background: #0f1419;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 12px;
+  }
+  .matrix-box table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .matrix-box th {
+    color: #fde047;
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #2a3548;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+  .matrix-box td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #2a3548;
+    color: #cbd5e1;
+  }
+  .scenario-card {
+    background: #1a2332;
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 22px;
+    border-left: 5px solid;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+  .scenario-card.take { border-left-color: #22c55e; }
+  .scenario-card.skip { border-left-color: #ef4444; }
+  .scenario-card.wait { border-left-color: #fbbf24; }
+  .scenario-card.full { border-left-color: #00E676; box-shadow: 0 0 20px rgba(0, 230, 118, 0.15); }
+  .scenario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .scenario-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: #fde047;
+  }
+  .scenario-meta {
+    color: #9ca3af;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+  .verdict-pill {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  .verdict-pill.take { background: #166534; color: #bbf7d0; }
+  .verdict-pill.full { background: #00C853; color: #ffffff; box-shadow: 0 0 12px rgba(0, 200, 83, 0.4); }
+  .verdict-pill.half { background: #15803d; color: #bbf7d0; }
+  .verdict-pill.quarter { background: #4ade80; color: #052e16; }
+  .verdict-pill.skip { background: #7f1d1d; color: #fecaca; }
+  .verdict-pill.wait { background: #78350f; color: #fde68a; }
+  .data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    background: #0a1018;
+    padding: 16px;
+    border-radius: 8px;
+    margin: 14px 0;
+  }
+  .data-block {
+    background: #0f1419;
+    padding: 14px;
+    border-radius: 6px;
+    border: 1px solid #2a3548;
+  }
+  .data-block h4 {
+    color: #9ca3af;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .data-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13px;
+    border-bottom: 1px dashed #1f2937;
+  }
+  .data-row:last-child { border: none; }
+  .data-row .key { color: #cbd5e1; }
+  .data-row .val { color: #fde047; font-family: monospace; font-weight: 700; }
+  .data-row .val.green { color: #4ade80; }
+  .data-row .val.red { color: #f87171; }
+  .data-row .val.yellow { color: #fbbf24; }
+  .explanation {
+    background: rgba(59, 130, 246, 0.08);
+    border-left: 3px solid #3b82f6;
+    padding: 14px 18px;
+    margin-top: 14px;
+    border-radius: 6px;
+    color: #cbd5e1;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .explanation strong { color: #fde047; }
+  .pidgin {
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: rgba(34, 197, 94, 0.07);
+    border-radius: 6px;
+    border-left: 3px solid #22c55e;
+    color: #86efac;
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .pidgin::before {
+    content: "🇳🇬 In Pidgin: ";
+    font-weight: 700;
+    font-style: normal;
+    color: #4ade80;
+  }
+  .key-takeaway {
+    background: linear-gradient(90deg, #166534, #15803d);
+    color: white;
+    padding: 22px;
+    border-radius: 12px;
+    margin: 32px auto;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(22, 101, 52, 0.4);
+  }
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    padding: 20px;
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+  <h1>🎯 Lesson 5 — Conviction-Aware Decisions</h1>
+  <div class="subtitle">When to override the score · When to stand down · 8 worked scenarios</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- INTRO + DECISION MATRIX                                        -->
+<!-- ============================================================ -->
+
+<div class="intro">
+  <h2>📚 The new rule v5.5.2 enforces</h2>
+  <p>You used to read just the <strong>score badge</strong> (e.g., "14/18 = A++ → take"). That worked. But it ignored <em>context</em> — was the trade aligned with the day's regime? Was price extended? Was the market more volatile than the options market expected?</p>
+  <p>v5.5.2 adds a <strong>conviction multiplier</strong> on top of the score. The multiplier ranges 0.4 to 2.5 and modulates 4 independent context factors:</p>
+  <ul style="color:#cbd5e1;line-height:1.8;padding-left:24px;margin:8px 0;">
+    <li><strong>Location</strong> (VP) — is the zone at VAL/HVN/POC?</li>
+    <li><strong>Regime</strong> (AMT) — is your trade with or against today's auction type?</li>
+    <li><strong>Probability</strong> (SD position) — has price already moved most of its expected range?</li>
+    <li><strong>Volatility</strong> (Realized vs Implied) — is the market matching, exceeding, or undershooting expectations?</li>
+  </ul>
+  <p>Conviction = base score × multiplier_product. The <strong>tier (A++/A+/B+) still drives go/no-go</strong>, but conviction now drives <strong>position size and overrides</strong>.</p>
+
+  <div class="matrix-box">
+    <table>
+      <thead>
+        <tr><th>Base tier</th><th>Conviction multiplier</th><th>Action + Size</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong style="color:#fde047;">A++</strong> (14+/18)</td><td><strong style="color:#4ade80;">≥ 1.20</strong></td><td><strong style="color:#00E676;">TAKE — full 1%</strong></td></tr>
+        <tr><td><strong style="color:#fde047;">A++</strong> (14+/18)</td><td>0.90 - 1.20</td><td>TAKE — standard 1%</td></tr>
+        <tr><td><strong style="color:#fde047;">A++</strong> (14+/18)</td><td><strong style="color:#fbbf24;">&lt; 0.90</strong></td><td><strong style="color:#fbbf24;">WAIT — context wrong</strong></td></tr>
+        <tr><td><strong style="color:#fde047;">A+</strong> (12-13/18)</td><td>≥ 1.20</td><td>TAKE — standard 1%</td></tr>
+        <tr><td><strong style="color:#fde047;">A+</strong> (12-13/18)</td><td>0.90 - 1.20</td><td>TAKE — half 0.5%</td></tr>
+        <tr><td><strong style="color:#fde047;">A+</strong> (12-13/18)</td><td>&lt; 0.90</td><td><strong style="color:#f87171;">SKIP</strong></td></tr>
+        <tr><td><strong style="color:#fde047;">B+</strong> (9-11/18)</td><td>≥ 1.30</td><td>TAKE — quarter 0.25% (only if 30+ trades logged)</td></tr>
+        <tr><td><strong style="color:#fde047;">B+</strong> (9-11/18)</td><td>&lt; 1.30</td><td><strong style="color:#f87171;">SKIP</strong></td></tr>
+        <tr><td colspan="2"><strong>Below 9</strong></td><td><strong style="color:#f87171;">SKIP — always</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCENARIO 1: Perfect Storm                                      -->
+<!-- ============================================================ -->
+
+<div class="scenario-card full">
+  <div class="scenario-header">
+    <div>
+      <div class="scenario-title">Scenario 1 — The Perfect Storm</div>
+      <div class="scenario-meta">NQ 5M · 03:15 ET London · A+ structure + perfect AMT alignment</div>
+    </div>
+    <span class="verdict-pill full">✓ TAKE — FULL 1%</span>
+  </div>
+  <div class="data-grid">
+    <div class="data-block">
+      <h4>Score Badge</h4>
+      <div class="data-row"><span class="key">Buy score</span><span class="val">13/18</span></div>
+      <div class="data-row"><span class="key">FVG</span><span class="val green">YES</span></div>
+      <div class="data-row"><span class="key">HTF count</span><span class="val">5/6</span></div>
+      <div class="data-row"><span class="key">Base tier</span><span class="val yellow">A+</span></div>
+    </div>
+    <div class="data-block">
+      <h4>Conviction (v5.5.2)</h4>
+      <div class="data-row"><span class="key">AMT type</span><span class="val green">Type 4: Reversal Up</span></div>
+      <div class="data-row"><span class="key">SD position</span><span class="val green">-1.5 (extended down)</span></div>
+      <div class="data-row"><span class="key">Vol ratio</span><span class="val green">0.65 (low vol regime)</span></div>
+      <div class="data-row"><span class="key">Loc / Reg / Prob / Vol</span><span class="val">1.30 / 1.40 / 1.40 / 1.20</span></div>
+      <div class="data-row"><span class="key">Multiplier product</span><span class="val green">x1.40 (clamped)</span></div>
+      <div class="data-row"><span class="key">Conviction</span><span class="val green">13 × 1.40 = 18.2</span></div>
+    </div>
+  </div>
+  <div class="explanation">
+    <strong>Why FULL 1%:</strong> Base tier is "only" A+ (13/18), but every contextual factor is screaming "buy." Reversal day open below value with auction failing back up; price already extended 1.5 SD below open; low realized vol favors mean reversion; zone overlaps VAL in discount. All 4 multipliers fire ≥1.20. Conviction at 18.2 is essentially A++ effective. <strong>Take with full size despite "only" being A+ on raw score.</strong> These setups are rare — maybe 2-3 per week — and they pay for whole losing streaks.
+  </div>
+  <div class="pidgin">A+ score (13) but everything else dey shout "buy fully" — reversal day, extended down, low vol, perfect VP location. All four multipliers above 1.20. Conviction 18.2 — better than most A++. Take full 1%. These ones rare, but they pay.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCENARIO 2: Hostile Regime                                     -->
+<!-- ============================================================ -->
+
+<div class="scenario-card skip">
+  <div class="scenario-header">
+    <div>
+      <div class="scenario-title">Scenario 2 — Hostile Regime (the trap)</div>
+      <div class="scenario-meta">NQ 5M · 11:30 ET NY AM · A++ structure + Type 3 trend day countertrend</div>
+    </div>
+    <span class="verdict-pill skip">✗ SKIP</span>
+  </div>
+  <div class="data-grid">
+    <div class="data-block">
+      <h4>Score Badge</h4>
+      <div class="data-row"><span class="key">Sell score</span><span class="val red">16/18</span></div>
+      <div class="data-row"><span class="key">FVG</span><span class="val green">YES</span></div>
+      <div class="data-row"><span class="key">HTF count</span><span class="val">6/6</span></div>
+      <div class="data-row"><span class="key">Base tier</span><span class="val yellow">A++</span></div>
+    </div>
+    <div class="data-block">
+      <h4>Conviction (v5.5.2)</h4>
+      <div class="data-row"><span class="key">AMT type</span><span class="val red">Type 3: Trend Up</span></div>
+      <div class="data-row"><span class="key">SD position</span><span class="val red">+1.2 (extended up)</span></div>
+      <div class="data-row"><span class="key">Vol ratio</span><span class="val">1.10 (at expectation)</span></div>
+      <div class="data-row"><span class="key">Loc / Reg / Prob / Vol</span><span class="val">1.00 / 0.65 / 0.85 / 1.00</span></div>
+      <div class="data-row"><span class="key">Multiplier product</span><span class="val red">x0.55 (penalty)</span></div>
+      <div class="data-row"><span class="key">Conviction</span><span class="val red">16 × 0.55 = 8.8</span></div>
+    </div>
+  </div>
+  <div class="explanation">
+    <strong>Why SKIP despite A++:</strong> Beautiful sell setup on paper — 16/18 with HTF 6/6. But you're trying to short a confirmed up-trend day (Type 3 Trend Up) with price extended 1.2 SD above open. The regime multiplier alone hammers conviction by 35% (0.65). Probability adds another 15% penalty (0.85). Conviction collapses to 8.8 — below B+ effective. <strong>This is exactly the trap v5.5.2 was built to catch.</strong> Pre-v5.5, you'd take this and lose. Post-v5.5, conviction filter saves you.
+  </div>
+  <div class="pidgin">A++ na the score, but you wan short trend-up day at +1.2 SD. Regime multiplier hit you 0.65, probability hit you 0.85, conviction collapse to 8.8 — that's worse than B+. Old system fit make you enter and lose. Conviction filter save your account today. Skip.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCENARIO 3: B+ Lifted                                          -->
+<!-- ============================================================ -->
+
+<div class="scenario-card take">
+  <div class="scenario-header">
+    <div>
+      <div class="scenario-title">Scenario 3 — B+ Lifted to Tradeable</div>
+      <div class="scenario-meta">NQ 5M · 02:45 ET London · marginal structure + perfect context (after 30 trades)</div>
+    </div>
+    <span class="verdict-pill quarter">⚡ TAKE — QUARTER 0.25%</span>
+  </div>
+  <div class="data-grid">
+    <div class="data-block">
+      <h4>Score Badge</h4>
+      <div class="data-row"><span class="key">Buy score</span><span class="val">10/18</span></div>
+      <div class="data-row"><span class="key">FVG</span><span class="val green">YES</span></div>
+      <div class="data-row"><span class="key">HTF count</span><span class="val">3/6</span></div>
+      <div class="data-row"><span class="key">Base tier</span><span class="val yellow">B+</span></div>
+    </div>
+    <div class="data-block">
+      <h4>Conviction (v5.5.2)</h4>
+      <div class="data-row"><span class="key">AMT type</span><span class="val green">Type 4: Reversal Up</span></div>
+      <div class="data-row"><span class="key">SD position</span><span class="val green">-1.3 (extended down)</span></div>
+      <div class="data-row"><span class="key">Zone overlap</span><span class="val green">VAL + HVN (Tier 3 VP)</span></div>
+      <div class="data-row"><span class="key">Loc / Reg / Prob / Vol</span><span class="val">1.30 / 1.40 / 1.20 / 1.10</span></div>
+      <div class="data-row"><span class="key">Multiplier product</span><span class="val green">x1.42 (well above 1.30 B+ threshold)</span></div>
+      <div class="data-row"><span class="key">Conviction</span><span class="val green">10 × 1.42 = 14.2</span></div>
+    </div>
+  </div>
+  <div class="explanation">
+    <strong>Why TAKE despite weak HTF:</strong> Pure B+ on structure (10/18, HTF only 3/6). Pre-v5.5, this would skip. But conviction multiplier reaches 1.42 — exceeding the 1.30 B+ unlock threshold. Auction theory is screaming "reverse from value" + extended SD + zone at VAL + low realized vol all stack. Take with quarter size (0.25%) only. <strong>Important:</strong> B+ tradeable conviction-overridden setups require 30+ logged trades. Below 30, still skip. (Per playbook section 6 + 3b.)
+  </div>
+  <div class="pidgin">B+ score (10), HTF only 3/6 — old system go skip. But conviction 1.42, well above 1.30 unlock. Reversal day, deep discount, perfect VP location. Take quarter size only — B+ no be A+. And only after you don log 30 trades. Don't shortcut.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCENARIO 4: A+ Extended Price                                  -->
+<!-- ============================================================ -->
+
+<div class="scenario-card wait">
+  <div class="scenario-header">
+    <div>
+      <div class="scenario-title">Scenario 4 — A+ at Extended Price (downgrade to half)</div>
+      <div class="scenario-meta">NQ 5M · 10:15 ET NY AM · solid structure but late in move</div>
+    </div>
+    <span class="verdict-pill half">⚠ TAKE — HALF 0.5%</span>
+  </div>
+  <div class="data-grid">
+    <div class="data-block">
+      <h4>Score Badge</h4>
+      <div class="data-row"><span class="key">Buy score</span><span class="val">13/18</span></div>
+      <div class="data-row"><span class="key">FVG</span><span class="val green">YES</span></div>
+      <div class="data-row"><span class="key">HTF count</span><span class="val">5/6</span></div>
+      <div class="data-row"><span class="key">Base tier</span><span class="val yellow">A+</span></div>
+    </div>
+    <div class="data-block">
+      <h4>Conviction (v5.5.2)</h4>
+      <div class="data-row"><span class="key">AMT type</span><span class="val">Type 1: Normal</span></div>
+      <div class="data-row"><span class="key">SD position</span><span class="val red">+1.4 (extended up)</span></div>
+      <div class="data-row"><span class="key">Vol ratio</span><span class="val">1.10 (at expectation)</span></div>
+      <div class="data-row"><span class="key">Loc / Reg / Prob / Vol</span><span class="val">1.00 / 1.30 / 0.65 / 1.00</span></div>
+      <div class="data-row"><span class="key">Multiplier product</span><span class="val yellow">x0.85 (mild penalty)</span></div>
+      <div class="data-row"><span class="key">Conviction</span><span class="val">13 × 0.85 = 11.0</span></div>
+    </div>
+  </div>
+  <div class="explanation">
+    <strong>Why HALF size:</strong> A+ on score, regime multiplier favors buy (Type 1 Normal + below POC = revert magnet 1.30). But probability multiplier punishes hard: at +1.4 SD, you're chasing a move that's already used most of its daily range. Mean-reversion territory becomes resistance. Conviction lands at 0.85 — borderline. Decision matrix says "0.90-1.20 = standard, &lt; 0.90 = skip" — at 0.85 you're below the threshold. Conservative call: take half 0.5% for the structure but acknowledge limited upside. Aggressive call: skip. Both defensible.
+  </div>
+  <div class="pidgin">A+ structure correct, but price don run 1.4 SD already — most of daily range used. Even though regime favor buy, probability says "small room to run." Half size na compromise. Or skip entirely if you wan be safe. Both defensible.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCENARIO 5: A++ Neutral                                        -->
+<!-- ============================================================ -->
+
+<div class="scenario-card take">
+  <div class="scenario-header">
+    <div>
+      <div class="scenario-title">Scenario 5 — A++ in Neutral Regime</div>
+      <div class="scenario-meta">XAUUSD 5M · 04:30 ET London · perfect structure, no contextual edge</div>
+    </div>
+    <span class="verdict-pill take">✓ TAKE — STANDARD 1%</span>
+  </div>
+  <div class="data-grid">
+    <div class="data-block">
+      <h4>Score Badge</h4>
+      <div class="data-row"><span class="key">Buy score</span><span class="val">15/18</span></div>
+      <div class="data-row"><span class="key">FVG</span><span class="val green">YES</span></div>
+      <div class="data-row"><span class="key">HTF count</span><span class="val">6/6</span></div>
+      <div class="data-row"><span class="key">Base tier</span><span class="val yellow">A++</span></div>
+    </div>
+    <div class="data-block">
+      <h4>Conviction (v5.5.2)</h4>
+      <div class="data-row"><span class="key">AMT type</span><span class="val">Type 2: Variation</span></div>
+      <div class="data-row"><span class="key">SD position</span><span class="val">+0.2 (at open)</span></div>
+      <div class="data-row"><span class="key">Vol ratio</span><span class="val">1.05 (at expectation)</span></div>
+      <div class="data-row"><span class="key">Loc / Reg / Prob / Vol</span><span class="val">1.00 / 1.00 / 1.00 / 1.00</span></div>
+      <div class="data-row"><span class="key">Multiplier product</span><span class="val">x1.00 (neutral)</span></div>
+      <div class="data-row"><span class="key">Conviction</span><span class="val">15 × 1.00 = 15.0</span></div>
+    </div>
+  </div>
+  <div class="explanation">
+    <strong>Why STANDARD (not full):</strong> A++ structure (15/18) with EVERY contextual multiplier at neutral 1.0. No regime edge, no SD edge, no vol edge, no special VP location. Conviction equals raw score. Per matrix: A++ + 0.90-1.20 conviction = standard 1%. <strong>Important lesson:</strong> A++ doesn't automatically mean full size in v5.5.2. Full size requires conviction ≥1.20. Neutral context = standard size. Don't over-size on raw score alone.
+  </div>
+  <div class="pidgin">Score 15/18 perfect, but conviction equal exactly 1.0 — nothing dey upgrade or downgrade. Standard 1%, no full. A++ alone no mean full size for v5.5 — full size need conviction 1.20+. This na neutral context, normal sizing.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCENARIO 6: B+ Without Boost                                   -->
+<!-- ============================================================ -->
+
+<div class="scenario-card skip">
+  <div class="scenario-header">
+    <div>
+      <div class="scenario-title">Scenario 6 — B+ Without Context Boost</div>
+      <div class="scenario-meta">EURUSD 5M · 03:30 ET London · marginal structure, neutral regime</div>
+    </div>
+    <span class="verdict-pill skip">✗ SKIP</span>
+  </div>
+  <div class="data-grid">
+    <div class="data-block">
+      <h4>Score Badge</h4>
+      <div class="data-row"><span class="key">Buy score</span><span class="val">10/18</span></div>
+      <div class="data-row"><span class="key">FVG</span><span class="val">NONE</span></div>
+      <div class="data-row"><span class="key">HTF count</span><span class="val">3/6</span></div>
+      <div class="data-row"><span class="key">Base tier</span><span class="val yellow">B+</span></div>
+    </div>
+    <div class="data-block">
+      <h4>Conviction (v5.5.2)</h4>
+      <div class="data-row"><span class="key">AMT type</span><span class="val">Type 2: Variation</span></div>
+      <div class="data-row"><span class="key">SD position</span><span class="val">-0.3</span></div>
+      <div class="data-row"><span class="key">Vol ratio</span><span class="val">0.95 (at expectation)</span></div>
+      <div class="data-row"><span class="key">Loc / Reg / Prob / Vol</span><span class="val">1.00 / 1.00 / 1.00 / 1.00</span></div>
+      <div class="data-row"><span class="key">Multiplier product</span><span class="val">x1.00 (neutral)</span></div>
+      <div class="data-row"><span class="key">Conviction</span><span class="val red">10 × 1.00 = 10.0</span></div>
+    </div>
+  </div>
+  <div class="explanation">
+    <strong>Why SKIP:</strong> B+ structure with neutral context. Per decision matrix, B+ requires conviction ≥1.30 to unlock — neutral 1.0 doesn't make it. <strong>This is the strict rule:</strong> B+ alone is never enough. The whole point is B+ becomes tradeable ONLY when context is clearly favorable. No favorable context = no trade, regardless of how clean the structure looks. Save your bullets for setups where context aligns.
+  </div>
+  <div class="pidgin">B+ alone no qualify — must get context boost (conviction ≥1.30). Neutral conviction = no boost = skip. The rule clear: B+ require special context to enter. Without it, no matter how nice the structure, no trade.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCENARIO 7: News Spike                                         -->
+<!-- ============================================================ -->
+
+<div class="scenario-card wait">
+  <div class="scenario-header">
+    <div>
+      <div class="scenario-title">Scenario 7 — News Spike Auto-Suspend</div>
+      <div class="scenario-meta">XAUUSD 5M · 14:05 ET · 5 min after FOMC decision</div>
+    </div>
+    <span class="verdict-pill wait">⏳ WAIT (system auto-suspended)</span>
+  </div>
+  <div class="data-grid">
+    <div class="data-block">
+      <h4>Score Badge</h4>
+      <div class="data-row"><span class="key">Buy score</span><span class="val">13/18</span></div>
+      <div class="data-row"><span class="key">FVG</span><span class="val green">YES</span></div>
+      <div class="data-row"><span class="key">HTF count</span><span class="val">5/6</span></div>
+      <div class="data-row"><span class="key">Base tier</span><span class="val yellow">A+</span></div>
+    </div>
+    <div class="data-block">
+      <h4>Conviction (v5.5.2)</h4>
+      <div class="data-row"><span class="key">AMT type</span><span class="val">Type 4: Reversal Up</span></div>
+      <div class="data-row"><span class="key">SD position</span><span class="val">-1.6 (extreme)</span></div>
+      <div class="data-row"><span class="key">Vol ratio</span><span class="val red">2.4x (NEWS SPIKE)</span></div>
+      <div class="data-row"><span class="key">News spike active</span><span class="val red">YES — module suspended</span></div>
+      <div class="data-row"><span class="key">Loc / Reg / Prob / Vol</span><span class="val">1.00 / 1.00 / 1.00 / 1.00</span></div>
+      <div class="data-row"><span class="key">Multiplier product</span><span class="val">x1.00 (forced neutral)</span></div>
+      <div class="data-row"><span class="key">Conviction</span><span class="val">13 × 1.00 = 13.0 (frozen)</span></div>
+    </div>
+  </div>
+  <div class="explanation">
+    <strong>Why WAIT:</strong> Realized vol exceeded 2x implied vol → automatic news spike detection triggered. v5.5.2 force-resets all four multipliers to 1.0 for 30 minutes after the spike. Setup looks compelling on paper but the system is telling you "I can't trust my context calculations during a news event." Smart move: do nothing for 30 min. After window closes, if setup still valid, re-evaluate. The conviction system will resume normal operation. <strong>Watch for the chart label:</strong> "⚠ NEWS SPIKE — module suspended."
+  </div>
+  <div class="pidgin">Realized vol pass 2x implied — news event detected. System auto-suspend the conviction layer for 30 min because the math no fit work for news spike. Wait the 30 min, then check if setup still valid. Don't fight the suspend.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCENARIO 8: Range Day Reversion                                -->
+<!-- ============================================================ -->
+
+<div class="scenario-card full">
+  <div class="scenario-header">
+    <div>
+      <div class="scenario-title">Scenario 8 — Range Day Reversion (the textbook short)</div>
+      <div class="scenario-meta">ES 5M · 13:45 ET NY PM · A++ sell + range day + extreme price</div>
+    </div>
+    <span class="verdict-pill full">✓ TAKE — FULL 1%</span>
+  </div>
+  <div class="data-grid">
+    <div class="data-block">
+      <h4>Score Badge</h4>
+      <div class="data-row"><span class="key">Sell score</span><span class="val">14/18</span></div>
+      <div class="data-row"><span class="key">FVG</span><span class="val green">YES</span></div>
+      <div class="data-row"><span class="key">HTF count</span><span class="val">5/6</span></div>
+      <div class="data-row"><span class="key">Base tier</span><span class="val yellow">A++</span></div>
+    </div>
+    <div class="data-block">
+      <h4>Conviction (v5.5.2)</h4>
+      <div class="data-row"><span class="key">AMT type</span><span class="val green">Type 1: Normal (range)</span></div>
+      <div class="data-row"><span class="key">SD position</span><span class="val green">+1.6 (extreme up)</span></div>
+      <div class="data-row"><span class="key">Vol ratio</span><span class="val green">0.70 (low vol regime)</span></div>
+      <div class="data-row"><span class="key">Zone overlap</span><span class="val green">VAH + HVN (Tier 3 VP)</span></div>
+      <div class="data-row"><span class="key">Loc / Reg / Prob / Vol</span><span class="val">1.30 / 1.30 / 1.40 / 1.20</span></div>
+      <div class="data-row"><span class="key">Multiplier product</span><span class="val green">x1.40 (clamped)</span></div>
+      <div class="data-row"><span class="key">Conviction</span><span class="val green">14 × 1.40 = 19.6</span></div>
+    </div>
+  </div>
+  <div class="explanation">
+    <strong>Why FULL 1%:</strong> The textbook range-day fade. Price extended +1.6 SD into VAH on a Type 1 Normal day with low realized vol — every Auction Market Theory book says "this is where institutions reverse." All 4 multipliers fire ≥1.20. Conviction at 19.6 is the highest tier the system can produce. Even though it's NY PM (which normally caps at A+/A++), the A++ structure + perfect conviction context says go full. <strong>This is the institutional bread-and-butter trade.</strong> Take 1% with confidence.
+  </div>
+  <div class="pidgin">Range day + price extreme +1.6 SD + at VAH + low vol — every Dalton/Steidlmayer book describe this as "the spot where institutions reverse." Conviction 19.6 — top of the system. NY PM normally tighter, but this setup deserve full 1%. Na the textbook trade.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- KEY TAKEAWAY                                                   -->
+<!-- ============================================================ -->
+
+<div class="key-takeaway">
+  📖 <strong>Score = "is the trigger clean?"</strong> · <strong>Conviction = "is the context favorable?"</strong> · <strong>Both must agree before you fire.</strong>
+  <br><br>
+  Pre-v5.5: Score 14/18 → take.<br>
+  Post-v5.5: Score 14/18 + Conviction ≥ 1.20 → take FULL. Score 14/18 + Conviction &lt; 0.90 → wait. Score 10/18 + Conviction ≥ 1.30 → take quarter.<br><br>
+  <em>The 18-point score didn't get bigger. The decision matrix did.</em>
+</div>
+
+<div class="footer">
+  <strong>seyilistofx · Gamma Naija Trading System · Lesson 5 v1.0</strong><br>
+  <em>Pre-req: Lessons 1-4. Companion: Cheat Sheet (per-asset settings) · Playbook §3b · v5.4.0 spec</em><br>
+  <span style="color:#6b7280;font-size:11px;">Calibration data collected over first 100 trades will refine these multiplier ranges.</span>
+</div>
+
+</div>
+
+</body>
+</html>
