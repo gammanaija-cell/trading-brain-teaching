@@ -440,6 +440,26 @@
 </div>
 
 <div class="card" style="border-color:#FFD700;">
+  <h3 style="color:#fde047;">📊 Volume Profile period options (v5.5.5) — which to use on which timeframe</h3>
+  <p style="color:#cbd5e1;font-size:13px;line-height:1.7;margin-bottom:12px;">
+    The VP module now supports 8 period options. <strong>Choose shorter periods on shorter chart timeframes</strong> — otherwise you're aggregating too much history into one profile and losing today's intraday detail.
+  </p>
+  <table>
+    <thead><tr><th>Chart timeframe</th><th>Recommended VP Period</th><th>Lookback</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1M</strong> (scalping)</td><td><code>Session</code> or <code>Daily</code></td><td>~6h or 24h</td><td>Today's developing volume profile; institutions react to today's auction</td></tr>
+      <tr><td><strong>3M / 5M</strong></td><td><code>Daily</code> or <code>2-Day</code></td><td>24h or 48h</td><td>Captures yesterday + today; ideal for intraday entries</td></tr>
+      <tr><td><strong>15M</strong> (execution)</td><td><code>2-Day</code> or <code>Weekly</code></td><td>48h or 7d</td><td>Multi-session view; sees prior day's value area</td></tr>
+      <tr><td><strong>1H</strong> (structure)</td><td><code>Weekly</code> or <code>Bi-Weekly</code></td><td>7d or 14d</td><td>Multi-day structure; institutional weekly accumulation</td></tr>
+      <tr><td><strong>4H</strong> (direction)</td><td><code>Bi-Weekly</code> or <code>Monthly</code></td><td>14d or 30d</td><td>Multi-week macro view</td></tr>
+      <tr><td><strong>Daily</strong> (swing)</td><td><code>Monthly</code> or <code>Bi-Monthly</code></td><td>30d or 60d</td><td>Macro positioning</td></tr>
+    </tbody>
+  </table>
+  <span class="step ok"><strong>Important:</strong> The VP histogram is computed from bars on the CURRENT chart's timeframe. So a "Daily" period on a 1M chart computes the profile from ~390 1-minute bars; on a 5M chart from ~78 5-minute bars; on a 1H chart from ~24 1-hour bars. The MORE bars feeding the histogram, the SMOOTHER the result — but also the LESS reactive to recent price.</span>
+  <span class="step ok"><strong>Common mistake:</strong> Using "Weekly" on a 1M chart pulls 1500+ bars (max cap) — you're seeing 25 hours of micro-data crammed into one profile. Useful for context, but lacks today's detail. Use "Session" or "Daily" instead.</span>
+  <span class="pidgin">Choose VP period to match your chart timeframe: 1M chart → Session/Daily VP. 5M → Daily/2-Day. 15M → 2-Day/Weekly. Higher TF chart, longer VP period. Wrong combo = either too smooth (no detail) or too noisy (no structure).</span>
+  <hr style="border-color:#fbbf24;margin:24px 0;">
+
   <h3 style="color:#fde047;">🧲 Why higher-timeframe POCs are the most important POIs in the system</h3>
   <p style="color:#cbd5e1;font-size:14px;line-height:1.7;margin-bottom:12px;">A Point of Control is the price level where the most volume traded over a given period. Longer period = stronger consensus = harder to push price away. Institutions defend these levels with size because their P&L is reported quarterly/annually.</p>
 
