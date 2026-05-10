@@ -915,10 +915,40 @@
         <td><span class="skip">SKIP</span></td>
       </tr>
       <tr style="background:#0f1419;">
-        <td><strong style="color:#fde047">Position size</strong></td>
+        <td><strong style="color:#fde047">Position size (raw tier)</strong></td>
         <td><strong style="color:#fde047">FULL (1% risk)</strong></td>
         <td><strong style="color:#cbd5e1">STANDARD (1% risk)</strong></td>
         <td><strong style="color:#fdba74">REDUCED (0.5% risk) until edge proven</strong></td>
+      </tr>
+      <tr style="background:rgba(156,39,176,0.10);border-top:2px solid #9C27B0;">
+        <td colspan="4" style="padding:14px 12px;color:#d8b4fe;font-weight:800;font-size:13px;">🎯 v5.5.2 CONVICTION OVERLAY (modulates final size)</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#d8b4fe">Conviction ≥ 1.20 (favorable)</strong></td>
+        <td><span class="ok">FULL 1%</span></td>
+        <td><span class="ok">STANDARD 1%</span></td>
+        <td><span class="ok">QUARTER 0.25% (after 30 trades)</span></td>
+      </tr>
+      <tr>
+        <td><strong style="color:#d8b4fe">Conviction 0.90 - 1.20 (neutral)</strong></td>
+        <td>STANDARD 1%</td>
+        <td>HALF 0.5%</td>
+        <td><span class="skip">SKIP</span></td>
+      </tr>
+      <tr>
+        <td><strong style="color:#d8b4fe">Conviction &lt; 0.90 (hostile)</strong></td>
+        <td><span class="skip">WAIT (context wrong)</span></td>
+        <td><span class="skip">SKIP</span></td>
+        <td><span class="skip">SKIP</span></td>
+      </tr>
+      <tr>
+        <td><strong style="color:#d8b4fe">B+ unlock threshold</strong></td>
+        <td>—</td>
+        <td>—</td>
+        <td><strong style="color:#d8b4fe">Conviction ≥ 1.30 required</strong></td>
+      </tr>
+      <tr style="background:#0f1419;">
+        <td colspan="4" style="padding:10px 12px;color:#cbd5e1;font-style:italic;font-size:12px;">📖 See <a href="lesson-5-conviction-decisions.html" style="color:#d8b4fe;text-decoration:underline;">Lesson 5 — Conviction-Aware Decisions</a> for 8 worked scenarios on overrides.</td>
       </tr>
     </tbody>
   </table>
@@ -926,13 +956,14 @@
 
 <!-- ====================== KEY TAKEAWAY ====================== -->
 <div class="key-takeaway">
-  ⭐ <strong>A++</strong> = sweep→CHoCH ≤ 5 bars + score ≥ 14 + HTF ≥ 5 → <em>full size</em> &nbsp;|&nbsp;
-  📊 <strong>A+</strong> = score ≥ 12 + HTF ≥ 5 → <em>standard size</em> &nbsp;|&nbsp;
-  📦 <strong>B+</strong> = score ≥ 9 + HTF 3-4 + London/NY AM only → <em>half size after 30+ logged trades</em>
+  ⭐ <strong>A++</strong> = score ≥ 14 + sweep→CHoCH → <em>full size</em> · with conviction ≥ 1.20 = highest conviction trade<br>
+  📊 <strong>A+</strong> = score ≥ 12 + HTF ≥ 5 → <em>standard 1%</em> · with conviction ≥ 1.20 = upgrade to full · with conviction &lt; 0.90 = skip<br>
+  📦 <strong>B+</strong> = score ≥ 9 + HTF 3-4 + London/NY AM → <em>only tradeable when conviction ≥ 1.30 AND 30+ trades logged</em><br>
+  <span style="color:#d8b4fe">🎯 v5.5.2: tier still drives go/no-go. Conviction drives final size + can override to wait/skip.</span>
 </div>
 
 <div class="footer">
-  SEYILISTOFX SMC · GAMMA NAIJA TRADING SYSTEM · Tier Decision Reference · Pine v5.2 Section 14 · Playbook Section 6
+  SEYILISTOFX SMC · GAMMA NAIJA TRADING SYSTEM · Tier Decision Reference · Pine v5.5.2 + Conviction Layer · Playbook Section 6 + 3b
 </div>
 
 </body>
