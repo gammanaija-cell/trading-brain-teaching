@@ -304,13 +304,13 @@
 
 <div class="header">
   <h1>🎯 Trade Decision Drill — TAKE / SKIP / WAIT</h1>
-  <div class="subtitle">12 scenarios · 3-second framework practice · self-test before going live</div>
+  <div class="subtitle">30 scenarios · 3-second framework practice · self-test before going live</div>
 </div>
 
 <div class="scoreboard">
   <div class="progress-bar">
-    <div class="progress-fill" id="progress-fill" style="width:8.3%"></div>
-    <div class="progress-label" id="progress-label">Scenario 1 of 12</div>
+    <div class="progress-fill" id="progress-fill" style="width:3.3%"></div>
+    <div class="progress-label" id="progress-label">Scenario 1 of 30</div>
   </div>
   <div class="stat"><div class="stat-num green" id="stat-correct">0</div><div class="stat-label">Correct</div></div>
   <div class="stat"><div class="stat-num red" id="stat-wrong">0</div><div class="stat-label">Wrong</div></div>
@@ -676,6 +676,550 @@ const scenarios = [
     correct: 'SKIP',
     explanation: "<strong>Off-hours kill (rule 8.2 — BLOCKING).</strong> 07:15 ET sits between London close (05:00) and NY AM open (09:30). Score is high enough for A+, but no killzone is active. Trades outside killzones = no institutional volume backing them, lower follow-through, wider spreads. Set an alert for the same level when NY AM opens (09:30) and revisit then. The level might still be valid.",
     pidgin: "Setup correct as A+, but time wrong. 07:15 na inside off-hours — London don close, NY AM never open. No big money for market, na thin volume. Set alert for NY AM open, e go fit still dey valid then."
+  },
+  // ====================== 13: SKIP - RSI BLOCK ======================
+  {
+    title: "Scenario 13 — NQ 5M",
+    meta: "10:30 ET · NY AM · RSI extreme",
+    prompt: "Setup just fired. <strong>BUY ZONE ✓ CONTINUATION</strong>. Score 14/18 | FVG | HTF 6/6. Looks A++. But the indicator's RSI cell shows <strong>BLOCK</strong> (RSI = 79, overbought).",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#7f1d1d"/>
+        <text x="400" y="18" text-anchor="middle" fill="#fecaca" font-size="12" font-weight="800">NQ · 5M · NY AM 10:30 ET — RSI BLOCK</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.16"/>
+        <rect x="220" y="200" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="216" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#fde047" stroke-width="2"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fde047" font-size="11" font-weight="800">Score 14/18 | FVG | HTF 6/6 ★ A++</text>
+        <line x1="100" y1="170" x2="100" y2="200" stroke="#26a69a"/><rect x="93" y="180" width="14" height="15" fill="#26a69a"/>
+        <line x1="140" y1="140" x2="140" y2="180" stroke="#26a69a"/><rect x="133" y="150" width="14" height="25" fill="#26a69a"/>
+        <line x1="180" y1="105" x2="180" y2="145" stroke="#26a69a"/><rect x="173" y="110" width="14" height="30" fill="#26a69a"/>
+        <line x1="220" y1="80" x2="220" y2="110" stroke="#26a69a"/><rect x="213" y="85" width="14" height="22" fill="#26a69a"/>
+        <rect x="50" y="60" width="700" height="35" fill="#7f1d1d" rx="4"/>
+        <text x="400" y="83" text-anchor="middle" fill="#fecaca" font-size="14" font-weight="800">⛔ RSI = 79 → BLOCK cell active (overbought)</text>
+      </svg>`,
+    correct: 'SKIP',
+    explanation: "<strong>RSI BLOCK is a hard veto.</strong> Score 14/18 + HTF 6/6 looks A++, but the MC filters (rule 3 step 6) require RSI not extreme. RSI 79 = exhaustion zone — buying here means buying the top of the move. Indicator is warning that mean reversion is statistically more likely than continuation. Wait for RSI to cool below 70 before considering re-entry.",
+    pidgin: "Score 14, HTF 6/6, but RSI cell red — meaning price don run too far up already. Buying for top na how people lose money. Wait make RSI cool down, then check if zone still valid."
+  },
+  // ====================== 14: SKIP - B+ in Asia ======================
+  {
+    title: "Scenario 14 — XAUUSD 5M",
+    meta: "21:30 ET · Asia killzone · B+ tier",
+    prompt: "Asia session is open. Setup just fired with <strong>BUY ZONE ✓ CONTINUATION</strong>. Score 9/18 | FVG | HTF 3/6 (B+ tier). RR 1:3.4.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#7f1d1d"/>
+        <text x="400" y="18" text-anchor="middle" fill="#fecaca" font-size="12" font-weight="800">XAUUSD · 5M · ASIA 21:30 ET — B+ BLOCKED IN ASIA</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.13"/>
+        <rect x="220" y="200" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="216" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#94a3b8"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fdba74" font-size="11" font-weight="700">Score 9/18 | FVG | HTF 3/6 (B+ tier)</text>
+        <line x1="100" y1="170" x2="100" y2="205" stroke="#ef5350"/><rect x="93" y="180" width="14" height="20" fill="#ef5350"/>
+        <line x1="140" y1="155" x2="140" y2="195" stroke="#26a69a"/><rect x="133" y="165" width="14" height="20" fill="#26a69a"/>
+        <line x1="180" y1="135" x2="180" y2="180" stroke="#26a69a"/><rect x="173" y="145" width="14" height="22" fill="#26a69a"/>
+        <line x1="220" y1="110" x2="220" y2="160" stroke="#26a69a"/><rect x="213" y="120" width="14" height="25" fill="#26a69a"/>
+      </svg>`,
+    correct: 'SKIP',
+    explanation: "<strong>B+ not allowed in Asia killzone (rule 2).</strong> Asian session is tradeable but only for A+ setups with strong nested HTF + sweep required. B+ tier gets skipped because Asian liquidity is thinner — B+ edge isn't enough to overcome wider spreads and lower follow-through. Wait for London open (02:00 ET) when B+ becomes valid again.",
+    pidgin: "Setup na B+, but Asia time only allow A+ and above. Asian volume thin pass London/NY, so B+ no get enough power to push. Wait small, London go open 02:00 ET — then B+ valid."
+  },
+  // ====================== 15: SKIP - 4H bearish vs 5M buy ======================
+  {
+    title: "Scenario 15 — XAUUSD 5M",
+    meta: "10:15 ET · NY AM · HTF disagrees",
+    prompt: "5M just fired <strong>BUY ZONE ✓ CONTINUATION</strong> with score 13/18. But your top-down analysis shows: 4H clearly bearish (LH+LL), 1H ranging. The 5M trigger is fighting the 4H trend.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#7f1d1d"/>
+        <text x="400" y="18" text-anchor="middle" fill="#fecaca" font-size="12" font-weight="800">XAUUSD — 4H BEARISH vs 5M BUY (HTF DISAGREES)</text>
+        <text x="120" y="80" fill="#fbbf24" font-size="13" font-weight="800">4H view (bearish):</text>
+        <line x1="120" y1="110" x2="200" y2="90" stroke="#ef5350" stroke-width="2"/>
+        <line x1="200" y1="90" x2="280" y2="130" stroke="#ef5350" stroke-width="2"/>
+        <line x1="280" y1="130" x2="360" y2="100" stroke="#ef5350" stroke-width="2"/>
+        <line x1="360" y1="100" x2="440" y2="160" stroke="#ef5350" stroke-width="2"/>
+        <text x="200" y="85" fill="#fca5a5" font-size="10">LH</text>
+        <text x="360" y="95" fill="#fca5a5" font-size="10">LH</text>
+        <text x="440" y="175" fill="#fca5a5" font-size="10">LL</text>
+        <text x="500" y="80" fill="#fbbf24" font-size="13" font-weight="800">5M (saying buy):</text>
+        <rect x="500" y="170" width="240" height="35" fill="#22c55e" opacity="0.18"/>
+        <rect x="540" y="175" width="160" height="22" fill="#22c55e"/>
+        <text x="620" y="191" text-anchor="middle" fill="#0a1018" font-size="11" font-weight="800">BUY ZONE ✓</text>
+        <text x="620" y="220" text-anchor="middle" fill="#fde047" font-size="10">Score 13/18 (would be A+)</text>
+        <rect x="50" y="240" width="700" height="35" fill="#7f1d1d" rx="4"/>
+        <text x="400" y="263" text-anchor="middle" fill="#fecaca" font-size="14" font-weight="800">⛔ Rule 1: 4H bias overrides 5M trigger</text>
+      </svg>`,
+    correct: 'SKIP',
+    explanation: "<strong>HTF stack must align (rule 1).</strong> The 4-TF stack is hierarchical: 4H bias is the highest authority. If 4H is bearish, only sell setups qualify. A 5M buy trigger inside a 4H downtrend = countertrend trade = lower probability. Even with 13/18 score, the bias mismatch means institutional flow will likely push price back down. Skip and watch for 5M SELL triggers when price rallies into supply.",
+    pidgin: "4H dey go down, but 5M dey shout 'buy.' That na contradiction — like driver dey go north but passenger dey scream 'south.' 4H bias na king. Skip this. Wait for sell setup wey go agree with the 4H direction."
+  },
+  // ====================== 16: SKIP - FOMC minutes ======================
+  {
+    title: "Scenario 16 — XAUUSD 5M",
+    meta: "13:40 ET · NY PM · FOMC minutes 13:50",
+    prompt: "Clean A+ setup just fired: Score 13/18 | FVG | HTF 5/6. <strong>BUY ZONE ✓ CONTINUATION</strong>. Calendar shows: <strong>FOMC Minutes release at 14:00 ET</strong> (20 minutes from now).",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#7f1d1d"/>
+        <text x="400" y="18" text-anchor="middle" fill="#fecaca" font-size="12" font-weight="800">XAUUSD · 5M · 13:40 ET — FOMC MINUTES IN 20 MIN</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.15"/>
+        <rect x="220" y="200" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="216" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#94a3b8"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fde047" font-size="11" font-weight="700">Score 13/18 | FVG | HTF 5/6 (A+)</text>
+        <line x1="100" y1="160" x2="100" y2="195" stroke="#ef5350"/><rect x="93" y="170" width="14" height="20" fill="#ef5350"/>
+        <line x1="140" y1="180" x2="140" y2="220" stroke="#ef5350"/><rect x="133" y="195" width="14" height="20" fill="#ef5350"/>
+        <line x1="180" y1="120" x2="180" y2="195" stroke="#26a69a"/><rect x="173" y="130" width="14" height="55" fill="#26a69a"/>
+        <path d="M 195 135 L 225 130 L 220 135 L 230 135 L 230 145 L 220 145 L 225 150 Z" fill="#22c55e"/>
+        <text x="240" y="138" fill="#4ade80" font-size="13" font-weight="800">CHoCH ▲</text>
+        <rect x="50" y="60" width="700" height="35" fill="#7f1d1d" rx="4"/>
+        <text x="400" y="83" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">⚠ FOMC Minutes 14:00 ET — 20 min away</text>
+      </svg>`,
+    correct: 'SKIP',
+    explanation: "<strong>FOMC minutes are inside the 30-min news block (rule 4).</strong> 20 minutes is well within the danger window. FOMC minutes can spike gold/EUR/NQ violently in either direction depending on hawkish/dovish surprise. Even an A+ setup gets shredded if Powell's prior remarks are reinterpreted. Wait at least 30 min after the 14:00 release, then re-evaluate the same level.",
+    pidgin: "Setup correct, but FOMC minutes dey come for 20 min. FOMC fit move gold $20 in one minute — your stop go run anywhere. Wait till 14:30 minimum, then check chart again. Setup fit still valid, fit also don die."
+  },
+  // ====================== 17: SKIP - just below threshold ======================
+  {
+    title: "Scenario 17 — EURUSD 5M",
+    meta: "03:20 ET · London · borderline score",
+    prompt: "Setup fired. <strong>BUY ZONE ✓ CONTINUATION</strong>. Score 8/18 | FVG | HTF 4/6. RR 1:3.5. London open. Looks structurally clean.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#475569"/>
+        <text x="400" y="18" text-anchor="middle" fill="#f1f5f9" font-size="12" font-weight="800">EURUSD · 5M · LONDON 03:20 ET — JUST UNDER THRESHOLD</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.13"/>
+        <rect x="220" y="200" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="216" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#fb923c"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fb923c" font-size="11" font-weight="700">Score 8/18 (1 below B+ minimum 9)</text>
+        <line x1="100" y1="170" x2="100" y2="200" stroke="#ef5350"/><rect x="93" y="180" width="14" height="15" fill="#ef5350"/>
+        <line x1="140" y1="155" x2="140" y2="190" stroke="#26a69a"/><rect x="133" y="165" width="14" height="20" fill="#26a69a"/>
+        <line x1="180" y1="140" x2="180" y2="175" stroke="#26a69a"/><rect x="173" y="148" width="14" height="20" fill="#26a69a"/>
+        <line x1="220" y1="120" x2="220" y2="160" stroke="#26a69a"/><rect x="213" y="128" width="14" height="22" fill="#26a69a"/>
+      </svg>`,
+    correct: 'SKIP',
+    explanation: "<strong>Score 8/18 is below B+ minimum (9).</strong> Threshold is binary — there's no \"close enough.\" Score thresholds exist precisely to prevent gut-feel trades during borderline cases. Trading 8/18 because it \"feels close\" is how rule fade starts. The threshold protects you from yourself. Skip and wait for a 9+ to trigger on this same level.",
+    pidgin: "Score 8/18 — one below 9. \"Almost\" no dey enter. Threshold na threshold. If you start to bend rule for 8, tomorrow you go bend for 7, next month for 5. Discipline na the only edge. Skip."
+  },
+  // ====================== 18: SKIP - RR below 1:3 ======================
+  {
+    title: "Scenario 18 — XAUUSD 5M",
+    meta: "10:00 ET · NY AM · RR too tight",
+    prompt: "A+ setup fired. Score 13/18 | FVG | HTF 5/6. <strong>BUY ZONE ✓ CONTINUATION</strong>. But: stop sits 12 pips below entry (above swept wick), and the next liquidity pool is only 30 pips away. RR = 1:2.5.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#7f1d1d"/>
+        <text x="400" y="18" text-anchor="middle" fill="#fecaca" font-size="12" font-weight="800">XAUUSD · 5M · NY AM 10:00 ET — RR 1:2.5 TOO TIGHT</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.15"/>
+        <rect x="220" y="200" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="216" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#94a3b8"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fde047" font-size="11" font-weight="700">Score 13/18 | FVG | HTF 5/6 (A+)</text>
+        <line x1="200" y1="220" x2="600" y2="220" stroke="#ef5350" stroke-dasharray="4,2"/>
+        <text x="610" y="224" fill="#fca5a5" font-size="10" font-weight="700">SL (12 pips)</text>
+        <line x1="200" y1="180" x2="600" y2="180" stroke="#fbbf24"/>
+        <text x="610" y="184" fill="#fde047" font-size="10" font-weight="700">Entry</text>
+        <line x1="200" y1="105" x2="600" y2="105" stroke="#4ade80" stroke-dasharray="4,2"/>
+        <text x="610" y="109" fill="#86efac" font-size="10" font-weight="700">Next pool (30 pips = 1:2.5)</text>
+        <line x1="180" y1="170" x2="180" y2="225" stroke="#ef5350"/><rect x="173" y="180" width="14" height="20" fill="#ef5350"/>
+        <line x1="220" y1="150" x2="220" y2="190" stroke="#26a69a"/><rect x="213" y="160" width="14" height="20" fill="#26a69a"/>
+        <line x1="260" y1="125" x2="260" y2="160" stroke="#26a69a"/><rect x="253" y="135" width="14" height="20" fill="#26a69a"/>
+      </svg>`,
+    correct: 'SKIP',
+    explanation: "<strong>RR 1:2.5 is below the strict 1:3 minimum (rule 5).</strong> Entry quality doesn't matter if the math fails. Strict-mode 1:3 is what makes a 50% win rate profitable. Taking 1:2.5 setups means even at 60% wins you bleed slowly. The next liquidity pool being too close = no room to run. Skip and wait for setups where TP2 sits at least 1:3 away.",
+    pidgin: "Setup A+, but TP too close to entry — 1:2.5 only. The math no work. Strict 1:3 na what dey turn 50% win rate to profit. If you take 1:2.5, even win rate 60% you go still bleed. Skip am, wait for setup wey TP far reach 1:3."
+  },
+  // ====================== 19: SKIP - already in active position ======================
+  {
+    title: "Scenario 19 — NQ 5M",
+    meta: "10:50 ET · NY AM · already in trade",
+    prompt: "You're already long XAUUSD from a 10:15 entry (still running, currently +1.2R). NQ now fires its own A+ setup: Score 13/18 | HTF 5/6. <strong>BUY ZONE ✓ CONTINUATION</strong>.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#7f1d1d"/>
+        <text x="400" y="18" text-anchor="middle" fill="#fecaca" font-size="12" font-weight="800">NQ · 5M · NY AM 10:50 ET — ALREADY IN XAUUSD POSITION</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.15"/>
+        <rect x="220" y="200" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="216" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#94a3b8"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fde047" font-size="11" font-weight="700">Score 13/18 | FVG | HTF 5/6 (A+)</text>
+        <line x1="100" y1="170" x2="100" y2="205" stroke="#ef5350"/><rect x="93" y="180" width="14" height="20" fill="#ef5350"/>
+        <line x1="140" y1="155" x2="140" y2="195" stroke="#26a69a"/><rect x="133" y="165" width="14" height="22" fill="#26a69a"/>
+        <line x1="180" y1="130" x2="180" y2="170" stroke="#26a69a"/><rect x="173" y="140" width="14" height="20" fill="#26a69a"/>
+        <line x1="220" y1="105" x2="220" y2="145" stroke="#26a69a"/><rect x="213" y="115" width="14" height="22" fill="#26a69a"/>
+        <rect x="50" y="60" width="700" height="35" fill="#7f1d1d" rx="4"/>
+        <text x="400" y="83" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="800">⚠ Active: XAUUSD long from 10:15 (+1.2R running)</text>
+      </svg>`,
+    correct: 'SKIP',
+    explanation: "<strong>One position at a time during paper-trading phase.</strong> Even if NQ setup is independent and uncorrelated, doubling exposure splits attention — you'll either mismanage XAUUSD (cutting too early to focus on NQ) or forget to trail NQ properly. Risk-management math also breaks: if both stop out, you lose 2% in one window. Manage XAUUSD to TP2 first. Note NQ level for later but don't enter.",
+    pidgin: "You don dey for XAUUSD trade already, +1.2R dey run. If you enter NQ now, your eye go scatter — you go cut XAUUSD too early or forget NQ trail. Two trade na 2% risk for one window. Finish first trade. NQ level go still dey valid in 30 min."
+  },
+  // ====================== 20: SKIP - FVG NONE on A++ ======================
+  {
+    title: "Scenario 20 — XAUUSD 5M",
+    meta: "10:00 ET · NY AM · FVG cell BLOCK",
+    prompt: "Setup fires. Score 14/18 | <strong>FVG: NONE</strong> | HTF 6/6. Sweep happened, CHoCH within 4 bars. But NO Fair Value Gap in the displacement candle. <strong>BUY ZONE ✓ CONTINUATION</strong>.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#475569"/>
+        <text x="400" y="18" text-anchor="middle" fill="#f1f5f9" font-size="12" font-weight="800">XAUUSD · 5M · NY AM 10:00 ET — NO FVG IN DISPLACEMENT</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.15"/>
+        <rect x="220" y="200" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="216" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#fbbf24"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700">Score 14/18 | FVG: NONE | HTF 6/6</text>
+        <line x1="100" y1="170" x2="100" y2="220" stroke="#ef5350"/><rect x="93" y="180" width="14" height="22" fill="#ef5350"/>
+        <line x1="140" y1="180" x2="140" y2="240" stroke="#ef5350"/><rect x="133" y="195" width="14" height="22" fill="#ef5350"/>
+        <line x1="180" y1="160" x2="180" y2="195" stroke="#26a69a"/><rect x="173" y="170" width="14" height="20" fill="#26a69a"/>
+        <line x1="220" y1="100" x2="220" y2="155" stroke="#26a69a"/><rect x="213" y="105" width="14" height="40" fill="#26a69a"/>
+        <text x="240" y="115" fill="#fbbf24" font-size="11" font-weight="700">No FVG ⚠</text>
+      </svg>`,
+    correct: 'SKIP',
+    explanation: "<strong>A++ requires FVG present.</strong> Score 14/18 + HTF 6/6 looks great, but the FVG cell shows NONE. The Hidden Entry Model relies on a gap in the displacement candle as the discount entry zone — without it, you're chasing the move without an institutional retracement reference. Drops the setup to A+ tier max. With score 14 and HTF 6/6 it could still be A+ if other conditions met, but the indicator's tier formula explicitly requires FVG for A++ stamp. Skip OR downgrade to A+ entry on retest.",
+    pidgin: "Score 14, HTF 6/6 — but FVG say NONE. A++ need FVG. Without gap for displacement candle, no retracement entry zone — you go chase price. Either skip or wait make price retrace, then enter as A+."
+  },
+  // ====================== 21: TAKE A++ SELL ======================
+  {
+    title: "Scenario 21 — XAUUSD 5M",
+    meta: "10:30 ET · NY AM · A++ SELL at PDH",
+    prompt: "Price swept yesterday's high (PDH), fired CHoCH down 2 bars later. <strong>SELL ZONE ✓ CONTINUATION</strong>. Score 16/18 | FVG | HTF 6/6. RR 1:5. NY AM open.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#22c55e"/>
+        <text x="400" y="18" text-anchor="middle" fill="#0a1018" font-size="12" font-weight="800">⭐ XAUUSD · 5M · NY AM 10:30 — A++ SELL at PDH</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="35" width="720" height="50" fill="#ef5350" opacity="0.18"/>
+        <rect x="220" y="40" width="360" height="22" fill="#ef5350"/>
+        <text x="400" y="56" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">SELL ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="63" width="360" height="20" fill="#1a2332" stroke="#fde047" stroke-width="2"/>
+        <text x="400" y="78" text-anchor="middle" fill="#fde047" font-size="11" font-weight="800">Score 16/18 | FVG | HTF 6/6 ★ A++</text>
+        <line x1="80" y1="100" x2="760" y2="100" stroke="#fbbf24" stroke-dasharray="4,2"/>
+        <text x="48" y="98" fill="#fde047" font-size="11" font-weight="700">PDH</text>
+        <line x1="100" y1="180" x2="100" y2="220" stroke="#26a69a"/><rect x="93" y="190" width="14" height="22" fill="#26a69a"/>
+        <line x1="140" y1="155" x2="140" y2="195" stroke="#26a69a"/><rect x="133" y="160" width="14" height="20" fill="#26a69a"/>
+        <line x1="180" y1="125" x2="180" y2="160" stroke="#26a69a"/><rect x="173" y="130" width="14" height="22" fill="#26a69a"/>
+        <line x1="220" y1="90" x2="220" y2="135" stroke="#26a69a"/><rect x="213" y="100" width="14" height="22" fill="#26a69a"/>
+        <line x1="260" y1="75" x2="260" y2="115" stroke="#ef5350"/><rect x="253" y="80" width="14" height="20" fill="#ef5350"/>
+        <path d="M 275 80 L 305 70 L 300 75 L 310 75 L 310 65 L 300 65 L 305 60 Z" fill="#ec4899"/>
+        <text x="320" y="78" fill="#f472b6" font-size="11" font-weight="700">SWEEP PDH</text>
+        <line x1="305" y1="115" x2="305" y2="145" stroke="#ef5350"/><rect x="298" y="120" width="14" height="22" fill="#ef5350"/>
+        <line x1="345" y1="155" x2="345" y2="200" stroke="#ef5350"/><rect x="338" y="160" width="14" height="40" fill="#ef5350"/>
+        <path d="M 360 195 L 390 200 L 385 195 L 395 195 L 395 205 L 385 205 L 390 210 Z" fill="#ef5350"/>
+        <text x="405" y="200" fill="#fca5a5" font-size="13" font-weight="800">CHoCH ▼</text>
+      </svg>`,
+    correct: 'TAKE',
+    explanation: "<strong>A++ short — perfect institutional liquidity grab.</strong> Sweep of PDH = stop-hunt of buyers' liquidity above key level. CHoCH down within 2 bars confirms reversal. Score 16/18 + HTF 6/6 + RR 1:5 + NY AM. Sell-side A++ is just as valid as buy-side; the model is symmetric. Take with full 1% risk, SL above swept wick, TP1 at 1:2 / TP2 at 1:5.",
+    pidgin: "Sweep PDH (yesterday high), then CHoCH down quick — institutions don grab buyers' stops, now they dey reverse. Score 16, HTF 6/6, RR 1:5. Sell setup just as valid as buy. Full size, 1% risk, stop above swept wick."
+  },
+  // ====================== 22: TAKE A+ Asia nested HTF ======================
+  {
+    title: "Scenario 22 — XAUUSD 5M",
+    meta: "22:00 ET · Asia · nested HTF + sweep",
+    prompt: "Asian session. Setup fires INSIDE 4H demand zone, INSIDE 1H demand zone, INSIDE 15M demand. Sweep of Asian Low + CHoCH. Score 13/18 | FVG | HTF 6/6. <strong>BUY ZONE ✓ CONTINUATION</strong>. RR 1:4.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#22c55e"/>
+        <text x="400" y="18" text-anchor="middle" fill="#0a1018" font-size="12" font-weight="800">XAUUSD · 5M · ASIA 22:00 ET — A+ NESTED HTF (allowed)</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="180" width="720" height="60" fill="#22c55e" opacity="0.10" stroke="#22c55e" stroke-dasharray="2,2"/>
+        <text x="50" y="195" fill="#86efac" font-size="9" font-weight="600">📦 4H demand</text>
+        <rect x="80" y="195" width="640" height="40" fill="#22c55e" opacity="0.13" stroke="#22c55e" stroke-dasharray="3,2"/>
+        <text x="90" y="208" fill="#86efac" font-size="9" font-weight="600">📦 1H demand (nested)</text>
+        <rect x="120" y="210" width="560" height="25" fill="#22c55e" opacity="0.18"/>
+        <text x="130" y="222" fill="#bbf7d0" font-size="9" font-weight="600">📦 15M demand (nested)</text>
+        <rect x="220" y="225" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="241" text-anchor="middle" fill="#0a1018" font-size="12" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <text x="400" y="265" text-anchor="middle" fill="#fde047" font-size="11" font-weight="700">Score 13/18 | FVG | HTF 6/6</text>
+        <line x1="100" y1="180" x2="100" y2="240" stroke="#ef5350"/><rect x="93" y="195" width="14" height="25" fill="#ef5350"/>
+        <line x1="140" y1="195" x2="140" y2="265" stroke="#ef5350"/><rect x="133" y="210" width="14" height="25" fill="#ef5350"/>
+        <path d="M 155 260 L 180 270 L 175 265 L 185 265 L 185 275 L 175 275 L 180 280 Z" fill="#ec4899"/>
+        <text x="192" y="270" fill="#f472b6" font-size="10" font-weight="700">SWEEP Asian Low</text>
+        <line x1="190" y1="170" x2="190" y2="200" stroke="#26a69a"/><rect x="183" y="175" width="14" height="22" fill="#26a69a"/>
+        <line x1="230" y1="95" x2="230" y2="170" stroke="#26a69a"/><rect x="223" y="100" width="14" height="55" fill="#26a69a"/>
+        <path d="M 245 110 L 275 105 L 270 110 L 280 110 L 280 120 L 270 120 L 275 125 Z" fill="#22c55e"/>
+        <text x="290" y="115" fill="#4ade80" font-size="13" font-weight="800">CHoCH ▲</text>
+      </svg>`,
+    correct: 'TAKE',
+    explanation: "<strong>Asia exception clears (rule 2 + section 4b).</strong> B+ skipped in Asia, but A+ allowed IF nested HTF + sweep both present. Here we have triple-nested demand (4H + 1H + 15M all aligned) AND a clean sweep of Asian Low + CHoCH. Score 13 + HTF 6/6 = A+. RR 1:4. Take with HALF size (0.5% risk) — Asia liquidity is thinner, so reduce position even though setup qualifies.",
+    pidgin: "Asia normally B+ no dey allow, but this setup pass the bar — 4H, 1H, 15M demand all stack one inside the other, sweep + CHoCH happen. Score 13, HTF 6/6 — na A+. Take am, but use HALF size (0.5% risk) because Asia volume thin."
+  },
+  // ====================== 23: TAKE A+ NY PM ======================
+  {
+    title: "Scenario 23 — NQ 5M",
+    meta: "14:15 ET · NY PM · A+ tier",
+    prompt: "Setup fires. Score 12/18 | FVG | HTF 5/6. <strong>BUY ZONE ✓ CONTINUATION</strong>. RR 1:3.5. NY PM session is open. No news within 30 min.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#22c55e"/>
+        <text x="400" y="18" text-anchor="middle" fill="#0a1018" font-size="12" font-weight="800">NQ · 5M · NY PM 14:15 ET — A+ ALLOWED</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.15"/>
+        <rect x="220" y="200" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="216" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#94a3b8"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fde047" font-size="11" font-weight="700">Score 12/18 | FVG | HTF 5/6 (A+)</text>
+        <line x1="100" y1="170" x2="100" y2="215" stroke="#ef5350"/><rect x="93" y="180" width="14" height="22" fill="#ef5350"/>
+        <line x1="140" y1="180" x2="140" y2="240" stroke="#ef5350"/><rect x="133" y="195" width="14" height="22" fill="#ef5350"/>
+        <path d="M 155 235 L 180 245 L 175 240 L 185 240 L 185 250 L 175 250 L 180 255 Z" fill="#ec4899"/>
+        <text x="192" y="247" fill="#f472b6" font-size="10" font-weight="700">SWEEP</text>
+        <line x1="190" y1="155" x2="190" y2="195" stroke="#26a69a"/><rect x="183" y="160" width="14" height="22" fill="#26a69a"/>
+        <line x1="240" y1="95" x2="240" y2="160" stroke="#26a69a"/><rect x="233" y="100" width="14" height="50" fill="#26a69a"/>
+        <path d="M 255 110 L 285 105 L 280 110 L 290 110 L 290 120 L 280 120 L 285 125 Z" fill="#22c55e"/>
+        <text x="300" y="115" fill="#4ade80" font-size="13" font-weight="800">CHoCH ▲</text>
+      </svg>`,
+    correct: 'TAKE',
+    explanation: "<strong>A+ qualifies in NY PM (rule 2).</strong> NY PM blocks B+ but allows A+/A++. Score 12/18 (above A+ threshold of 12) + HTF 5/6 + RR 1:3.5 + clean sweep+CHoCH + no news. Lower size than NY AM A+ since PM liquidity is thinner — take with 0.75% risk instead of 1%. TP1 at 1:2, runner to 1:3.5.",
+    pidgin: "NY PM no allow B+, but A+ dey allowed. Score 12, HTF 5/6, RR 1:3.5 — qualify. PM volume small reach AM, so use small size — 0.75% risk no be 1%. Still good trade, just no oversize."
+  },
+  // ====================== 24: TAKE A++ EURUSD London ======================
+  {
+    title: "Scenario 24 — EURUSD 5M",
+    meta: "03:00 ET · London open · perfect A++",
+    prompt: "London just opened. Sweep of Asian High, then CHoCH down 1 bar later. <strong>SELL ZONE ✓ CONTINUATION</strong>. Score 17/18 | FVG | HTF 6/6. RR 1:5.5.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#22c55e"/>
+        <text x="400" y="18" text-anchor="middle" fill="#0a1018" font-size="12" font-weight="800">⭐ EURUSD · 5M · LONDON OPEN 03:00 — A++ SELL ⭐</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="35" width="720" height="50" fill="#ef5350" opacity="0.18"/>
+        <rect x="220" y="40" width="360" height="22" fill="#ef5350"/>
+        <text x="400" y="56" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">SELL ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="63" width="360" height="20" fill="#1a2332" stroke="#fde047" stroke-width="2"/>
+        <text x="400" y="78" text-anchor="middle" fill="#fde047" font-size="11" font-weight="800">Score 17/18 | FVG | HTF 6/6 ★★ A++</text>
+        <line x1="80" y1="100" x2="760" y2="100" stroke="#fbbf24" stroke-dasharray="4,2"/>
+        <text x="48" y="98" fill="#fde047" font-size="11" font-weight="700">Asian H</text>
+        <line x1="100" y1="170" x2="100" y2="210" stroke="#26a69a"/><rect x="93" y="180" width="14" height="20" fill="#26a69a"/>
+        <line x1="140" y1="140" x2="140" y2="180" stroke="#26a69a"/><rect x="133" y="150" width="14" height="20" fill="#26a69a"/>
+        <line x1="180" y1="115" x2="180" y2="155" stroke="#26a69a"/><rect x="173" y="125" width="14" height="20" fill="#26a69a"/>
+        <line x1="220" y1="90" x2="220" y2="125" stroke="#26a69a"/><rect x="213" y="100" width="14" height="20" fill="#26a69a"/>
+        <line x1="260" y1="75" x2="260" y2="105" stroke="#ef5350"/><rect x="253" y="78" width="14" height="22" fill="#ef5350"/>
+        <path d="M 275 78 L 305 70 L 300 75 L 310 75 L 310 65 L 300 65 L 305 60 Z" fill="#ec4899"/>
+        <text x="320" y="78" fill="#f472b6" font-size="10" font-weight="700">SWEEP Asian H</text>
+        <line x1="305" y1="125" x2="305" y2="170" stroke="#ef5350"/><rect x="298" y="135" width="14" height="30" fill="#ef5350"/>
+        <path d="M 320 165 L 350 170 L 345 165 L 355 165 L 355 175 L 345 175 L 350 180 Z" fill="#ef5350"/>
+        <text x="365" y="170" fill="#fca5a5" font-size="13" font-weight="800">CHoCH ▼ (1 bar)</text>
+      </svg>`,
+    correct: 'TAKE',
+    explanation: "<strong>Textbook A++ at London open.</strong> Asian range high swept on the very candle that triggered London volume, CHoCH fired 1 bar later (extra-tight institutional fingerprint). Score 17/18 + HTF 6/6 + RR 1:5.5. London open is the highest-edge window for EURUSD because Asian range gets violated by London participants. Full 1% risk, SL above swept wick, target Asian Low for TP2.",
+    pidgin: "London just open, Asian H sweep, CHoCH down for next bar — na the perfect type. 17/18, HTF 6/6, RR 1:5.5 — best trade of the morning. Full 1% risk. SL above wick, TP2 target Asian Low. This na rent money."
+  },
+  // ====================== 25: TAKE B+ on confluence ======================
+  {
+    title: "Scenario 25 — XAUUSD 5M",
+    meta: "10:00 ET · NY AM · B+ with strong confluence",
+    prompt: "B+ setup fires. Score 9/18 | FVG | HTF 4/6. <strong>BUY ZONE ✓ CONTINUATION</strong>. RR 1:4. Critically: zone sits at confluence of PDL + 50% of London range + 1H demand OB. You have 35 logged trades, B+ win rate 62%.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#22c55e"/>
+        <text x="400" y="18" text-anchor="middle" fill="#0a1018" font-size="12" font-weight="800">XAUUSD · 5M · NY AM 10:00 — B+ TRIPLE CONFLUENCE</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.15"/>
+        <rect x="220" y="200" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="216" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#94a3b8"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fdba74" font-size="11" font-weight="700">Score 9/18 | FVG | HTF 4/6 (B+)</text>
+        <line x1="40" y1="220" x2="760" y2="220" stroke="#fbbf24" stroke-dasharray="4,2"/>
+        <text x="48" y="218" fill="#fde047" font-size="9" font-weight="700">PDL + London 50% + 1H OB</text>
+        <line x1="100" y1="170" x2="100" y2="215" stroke="#ef5350"/><rect x="93" y="180" width="14" height="22" fill="#ef5350"/>
+        <line x1="140" y1="180" x2="140" y2="225" stroke="#ef5350"/><rect x="133" y="190" width="14" height="22" fill="#ef5350"/>
+        <line x1="180" y1="160" x2="180" y2="200" stroke="#26a69a"/><rect x="173" y="170" width="14" height="20" fill="#26a69a"/>
+        <line x1="220" y1="130" x2="220" y2="170" stroke="#26a69a"/><rect x="213" y="140" width="14" height="22" fill="#26a69a"/>
+        <line x1="260" y1="105" x2="260" y2="140" stroke="#26a69a"/><rect x="253" y="110" width="14" height="22" fill="#26a69a"/>
+      </svg>`,
+    correct: 'TAKE',
+    explanation: "<strong>B+ tradeable when (a) 30+ trades logged AND (b) instrument-specific edge proven.</strong> B+ win rate 62% over 35 trades = positive expectancy. Triple confluence at the zone (PDL + London 50% + 1H OB) elevates this above bare-minimum B+. NY AM open. Take with HALF size (0.5% risk) — B+ default sizing per playbook. Don't oversize just because confluence looks pretty.",
+    pidgin: "B+ na, but 35 trade history say your B+ edge work (62% win rate). Plus zone get triple confluence — PDL, London 50%, 1H OB all stack. Take am with HALF size (0.5%) — even if e dey sweet, B+ na B+ size."
+  },
+  // ====================== 26: TAKE A+ structure-only ======================
+  {
+    title: "Scenario 26 — NQ 5M",
+    meta: "10:30 ET · NY AM · A+ no sweep",
+    prompt: "Price drops cleanly into 1H demand. Holds. CHoCH up. NO sweep occurred — price didn't grab any liquidity below. <strong>BUY ZONE ✓ CONTINUATION</strong>. Score 12/18 | FVG | HTF 5/6. RR 1:4.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#22c55e"/>
+        <text x="400" y="18" text-anchor="middle" fill="#0a1018" font-size="12" font-weight="800">NQ · 5M · NY AM 10:30 — A+ structure-only (no sweep)</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="180" width="720" height="50" fill="#22c55e" opacity="0.16"/>
+        <text x="50" y="194" fill="#86efac" font-size="10" font-weight="600">📦 1H demand OB</text>
+        <rect x="220" y="225" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="241" text-anchor="middle" fill="#0a1018" font-size="12" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <text x="400" y="265" text-anchor="middle" fill="#fde047" font-size="11" font-weight="700">Score 12/18 | FVG | HTF 5/6 (A+)</text>
+        <line x1="100" y1="155" x2="100" y2="195" stroke="#ef5350"/><rect x="93" y="165" width="14" height="22" fill="#ef5350"/>
+        <line x1="140" y1="170" x2="140" y2="210" stroke="#ef5350"/><rect x="133" y="180" width="14" height="22" fill="#ef5350"/>
+        <line x1="180" y1="185" x2="180" y2="220" stroke="#ef5350"/><rect x="173" y="195" width="14" height="22" fill="#ef5350"/>
+        <line x1="220" y1="190" x2="220" y2="220" stroke="#26a69a"/><rect x="213" y="195" width="14" height="22" fill="#26a69a"/>
+        <line x1="260" y1="160" x2="260" y2="200" stroke="#26a69a"/><rect x="253" y="170" width="14" height="22" fill="#26a69a"/>
+        <line x1="300" y1="120" x2="300" y2="165" stroke="#26a69a"/><rect x="293" y="125" width="14" height="35" fill="#26a69a"/>
+        <path d="M 315 130 L 345 125 L 340 130 L 350 130 L 350 140 L 340 140 L 345 145 Z" fill="#22c55e"/>
+        <text x="360" y="135" fill="#4ade80" font-size="13" font-weight="800">CHoCH ▲</text>
+      </svg>`,
+    correct: 'TAKE',
+    explanation: "<strong>A+ tier accepts structure-only entries (no sweep required, rule 6).</strong> Price respected the 1H demand OB cleanly, CHoCH confirmed reversal. No sweep just means no extra +3 bonus → can't reach A++ tier, but A+ minimum (score ≥12, HTF ≥5) is met. NY AM, no news, RR 1:4. Take at standard 1% risk. Slightly less aggressive than A++ since no liquidity grab, but still institutional structure.",
+    pidgin: "No sweep happen, but price reject 1H demand cleanly + CHoCH come. Score 12, HTF 5/6 — A+. No bonus reach A++, but minimum cross. NY AM, no news, RR 1:4. Take am, full 1%."
+  },
+  // ====================== 27: TAKE A++ Asian range sweep at London ======================
+  {
+    title: "Scenario 27 — GBPUSD 5M",
+    meta: "02:30 ET · London · Asian range hunt",
+    prompt: "London open just hit. Price ran straight to Asian Low (sweep), CHoCH up 3 bars later. <strong>BUY ZONE ✓ CONTINUATION</strong>. Score 15/18 | FVG | HTF 6/6. RR 1:5.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#22c55e"/>
+        <text x="400" y="18" text-anchor="middle" fill="#0a1018" font-size="12" font-weight="800">⭐ GBPUSD · 5M · LONDON 02:30 — Asian Low hunt → reversal</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.18"/>
+        <rect x="220" y="200" width="360" height="22" fill="#22c55e"/>
+        <text x="400" y="216" text-anchor="middle" fill="#0a1018" font-size="13" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#fde047" stroke-width="2"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fde047" font-size="11" font-weight="800">Score 15/18 | FVG | HTF 6/6 ★ A++</text>
+        <line x1="80" y1="245" x2="760" y2="245" stroke="#fbbf24" stroke-dasharray="4,2"/>
+        <text x="48" y="252" fill="#fde047" font-size="11" font-weight="700">Asian L</text>
+        <line x1="100" y1="170" x2="100" y2="220" stroke="#ef5350"/><rect x="93" y="180" width="14" height="25" fill="#ef5350"/>
+        <line x1="140" y1="190" x2="140" y2="240" stroke="#ef5350"/><rect x="133" y="200" width="14" height="25" fill="#ef5350"/>
+        <line x1="180" y1="210" x2="180" y2="265" stroke="#ef5350"/><rect x="173" y="225" width="14" height="22" fill="#ef5350"/>
+        <path d="M 195 260 L 220 270 L 215 265 L 225 265 L 225 275 L 215 275 L 220 280 Z" fill="#ec4899"/>
+        <text x="232" y="270" fill="#f472b6" font-size="10" font-weight="700">SWEEP Asian L</text>
+        <line x1="225" y1="170" x2="225" y2="200" stroke="#26a69a"/><rect x="218" y="178" width="14" height="20" fill="#26a69a"/>
+        <line x1="270" y1="140" x2="270" y2="175" stroke="#26a69a"/><rect x="263" y="150" width="14" height="20" fill="#26a69a"/>
+        <line x1="320" y1="85" x2="320" y2="140" stroke="#26a69a"/><rect x="313" y="90" width="14" height="40" fill="#26a69a"/>
+        <path d="M 335 100 L 365 95 L 360 100 L 370 100 L 370 110 L 360 110 L 365 115 Z" fill="#22c55e"/>
+        <text x="380" y="103" fill="#4ade80" font-size="13" font-weight="800">CHoCH ▲ (bar 3)</text>
+      </svg>`,
+    correct: 'TAKE',
+    explanation: "<strong>Classic London Asian-range hunt.</strong> Price made a fake breakdown (sweep of Asian Low), then institutions reversed with displacement = the highest-edge London entry pattern. Score 15/18 + HTF 6/6 + sweep+CHoCH within 3 bars + RR 1:5. Take full 1% risk. SL above swept wick, TP1 at 1:2 close 50%, TP2 at 1:5 (Asian H makes natural target).",
+    pidgin: "London just open, sweep Asian Low — pure stop-hunt. CHoCH come 3 bars later. 15/18, HTF 6/6, RR 1:5. Na the type wey London traders dey hunt every day. Full 1%, target Asian H for TP2."
+  },
+  // ====================== 28: WAIT - 5M sweep but 15M not aligned ======================
+  {
+    title: "Scenario 28 — XAUUSD 5M",
+    meta: "10:10 ET · NY AM · TF mismatch forming",
+    prompt: "5M just swept session low + CHoCH up. <strong>BUY ZONE ✓ CONTINUATION</strong>. Score 13/18 | FVG | HTF 5/6. BUT: 15M zone label still shows <strong>SELL ZONE — Waiting CHOCH</strong> (not aligned with 5M buy yet).",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#fbbf24"/>
+        <text x="400" y="18" text-anchor="middle" fill="#1a1a1a" font-size="12" font-weight="800">XAUUSD · 15M still SELL · 5M says BUY — MTF NOT ALIGNED</text>
+        <text x="60" y="55" fill="#fbbf24" font-size="11" font-weight="700">15M view:</text>
+        <rect x="60" y="62" width="320" height="35" fill="#ef5350" opacity="0.18"/>
+        <rect x="100" y="68" width="240" height="22" fill="#ef5350"/>
+        <text x="220" y="84" text-anchor="middle" fill="#0a1018" font-size="11" font-weight="800">SELL ZONE — Waiting CHOCH</text>
+        <text x="420" y="55" fill="#fbbf24" font-size="11" font-weight="700">5M view:</text>
+        <rect x="420" y="62" width="320" height="35" fill="#22c55e" opacity="0.18"/>
+        <rect x="460" y="68" width="240" height="22" fill="#22c55e"/>
+        <text x="580" y="84" text-anchor="middle" fill="#0a1018" font-size="11" font-weight="800">BUY ZONE ✓ CONTINUATION</text>
+        <line x1="40" y1="130" x2="760" y2="130" stroke="#1a2332"/>
+        <line x1="40" y1="190" x2="760" y2="190" stroke="#1a2332"/>
+        <line x1="40" y1="250" x2="760" y2="250" stroke="#1a2332"/>
+        <line x1="100" y1="180" x2="100" y2="225" stroke="#ef5350"/><rect x="93" y="190" width="14" height="22" fill="#ef5350"/>
+        <line x1="140" y1="200" x2="140" y2="245" stroke="#ef5350"/><rect x="133" y="210" width="14" height="22" fill="#ef5350"/>
+        <path d="M 155 240 L 180 250 L 175 245 L 185 245 L 185 255 L 175 255 L 180 260 Z" fill="#ec4899"/>
+        <line x1="190" y1="170" x2="190" y2="200" stroke="#26a69a"/><rect x="183" y="178" width="14" height="20" fill="#26a69a"/>
+        <line x1="240" y1="135" x2="240" y2="175" stroke="#26a69a"/><rect x="233" y="140" width="14" height="25" fill="#26a69a"/>
+        <path d="M 255 145 L 285 140 L 280 145 L 290 145 L 290 155 L 280 155 L 285 160 Z" fill="#22c55e"/>
+        <text x="295" y="148" fill="#4ade80" font-size="11" font-weight="700">5M CHoCH ▲</text>
+        <text x="400" y="275" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="700">⏳ Wait for 15M to flip from SELL — Waiting → BUY ✓</text>
+      </svg>`,
+    correct: 'WAIT',
+    explanation: "<strong>Multi-TF alignment incomplete.</strong> 5M trigger is ahead of the 15M structure flip. The 15M zone hasn't confirmed CHoCH yet — entering on 5M alone risks getting stopped when 15M sellers re-engage. Wait for 15M label to flip to BUY ✓. If it does within 2-3 5M bars, the trade tier upgrades. If 15M stays SELL or invalidates the 5M low, abandon.",
+    pidgin: "5M dey shout buy, but 15M still dey wait — no agreement yet. If you enter 5M alone, 15M sellers fit come kill am. Wait small make 15M flip to BUY ✓. If e flip, na A+ confirmed. If e no flip in 2-3 bars, the 5M go fail."
+  },
+  // ====================== 29: WAIT - killzone opens in 5 min ======================
+  {
+    title: "Scenario 29 — XAUUSD 5M",
+    meta: "09:25 ET · NY AM opens in 5 min",
+    prompt: "5 minutes before NY AM opens (09:30). Setup is forming: sweep happened, label shows <strong>BUY ZONE — Waiting CHOCH</strong>. Score 12/18 | FVG | HTF 5/6.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#fbbf24"/>
+        <text x="400" y="18" text-anchor="middle" fill="#1a1a1a" font-size="12" font-weight="800">XAUUSD · 5M · 09:25 ET — NY AM opens in 5 MIN</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.13" stroke="#22c55e" stroke-dasharray="4,2"/>
+        <rect x="220" y="200" width="360" height="22" fill="#15803d"/>
+        <text x="400" y="216" text-anchor="middle" fill="#bbf7d0" font-size="12" font-weight="800">BUY ZONE — Waiting CHOCH</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#94a3b8"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fde047" font-size="11" font-weight="700">Score 12/18 | FVG | HTF 5/6</text>
+        <line x1="100" y1="170" x2="100" y2="215" stroke="#ef5350"/><rect x="93" y="180" width="14" height="22" fill="#ef5350"/>
+        <line x1="140" y1="180" x2="140" y2="235" stroke="#ef5350"/><rect x="133" y="195" width="14" height="22" fill="#ef5350"/>
+        <path d="M 155 230 L 180 240 L 175 235 L 185 235 L 185 245 L 175 245 L 180 250 Z" fill="#ec4899"/>
+        <text x="192" y="242" fill="#f472b6" font-size="10" font-weight="700">SWEEP</text>
+        <line x1="190" y1="170" x2="190" y2="200" stroke="#26a69a"/><rect x="183" y="178" width="14" height="20" fill="#26a69a"/>
+        <text x="400" y="100" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="700">⏳ NY AM opens 09:30 ET — wait 5 min, then re-evaluate</text>
+      </svg>`,
+    correct: 'WAIT',
+    explanation: "<strong>Inside the 09:00-09:30 dead zone.</strong> Killzone gate is currently RED — NY AM opens at 09:30. Even if CHoCH fires now, taking the entry violates rule 2. Wait 5 minutes for NY AM to open. Then re-check: if zone still ✓ CONTINUATION + score still ≥A+ + no news → take. The setup might also fully complete during the open with stronger displacement, upgrading it.",
+    pidgin: "Setup dey form but NY AM never open — 5 minutes dey waka. If CHoCH come now, e no count because killzone closed. Wait 5 min, when 09:30 strike then check chart again. Setup fit even improve when London close volume cross over."
+  },
+  // ====================== 30: WAIT - third tap forming ======================
+  {
+    title: "Scenario 30 — NQ 5M",
+    meta: "10:20 ET · NY AM · 2nd tap rejected",
+    prompt: "Same demand zone has been tapped twice already today (both times rejected). Price is now coming back for a 3rd tap. Zone still shows <strong>BUY ZONE ✓ CONTINUATION</strong> (refreshed) but score dropped to 11/18 | FVG | HTF 4/6. No CHoCH yet.",
+    chart: `
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="28" fill="#fbbf24"/>
+        <text x="400" y="18" text-anchor="middle" fill="#1a1a1a" font-size="12" font-weight="800">NQ · 5M · NY AM 10:20 — 3rd TAP FORMING</text>
+        <line x1="40" y1="60" x2="760" y2="60" stroke="#1a2332"/>
+        <line x1="40" y1="120" x2="760" y2="120" stroke="#1a2332"/>
+        <line x1="40" y1="180" x2="760" y2="180" stroke="#1a2332"/>
+        <rect x="40" y="195" width="720" height="50" fill="#22c55e" opacity="0.13"/>
+        <rect x="220" y="200" width="360" height="22" fill="#15803d"/>
+        <text x="400" y="216" text-anchor="middle" fill="#bbf7d0" font-size="12" font-weight="800">BUY ZONE ✓ (refreshed, weakening)</text>
+        <rect x="220" y="223" width="360" height="20" fill="#1a2332" stroke="#94a3b8"/>
+        <text x="400" y="238" text-anchor="middle" fill="#fb923c" font-size="11" font-weight="700">Score 11/18 (down from 14) | HTF 4/6</text>
+        <line x1="80" y1="160" x2="80" y2="220" stroke="#ef5350"/><rect x="73" y="170" width="14" height="35" fill="#ef5350"/>
+        <line x1="115" y1="190" x2="115" y2="220" stroke="#26a69a"/><rect x="108" y="195" width="14" height="20" fill="#26a69a"/>
+        <text x="92" y="160" fill="#86efac" font-size="9" font-weight="700">Tap 1 ✓</text>
+        <line x1="170" y1="120" x2="170" y2="170" stroke="#26a69a"/><rect x="163" y="125" width="14" height="40" fill="#26a69a"/>
+        <line x1="210" y1="155" x2="210" y2="220" stroke="#ef5350"/><rect x="203" y="165" width="14" height="40" fill="#ef5350"/>
+        <line x1="250" y1="195" x2="250" y2="225" stroke="#26a69a"/><rect x="243" y="200" width="14" height="22" fill="#26a69a"/>
+        <text x="245" y="155" fill="#86efac" font-size="9" font-weight="700">Tap 2 ✓</text>
+        <line x1="305" y1="135" x2="305" y2="180" stroke="#26a69a"/><rect x="298" y="140" width="14" height="35" fill="#26a69a"/>
+        <line x1="345" y1="170" x2="345" y2="225" stroke="#ef5350"/><rect x="338" y="180" width="14" height="40" fill="#ef5350"/>
+        <line x1="385" y1="195" x2="385" y2="225" stroke="#ef5350"/><rect x="378" y="205" width="14" height="20" fill="#ef5350"/>
+        <text x="400" y="170" fill="#fbbf24" font-size="11" font-weight="700">⏳ Tap 3 forming — wait for CHoCH or breakdown</text>
+      </svg>`,
+    correct: 'WAIT',
+    explanation: "<strong>Multi-touch zones decay with each tap.</strong> Each successful rejection burns through the unmitigated liquidity in the zone — by tap 3, most institutional orders are filled. Score dropping from 14 → 11 confirms the indicator sees the same. Two outcomes possible: (a) zone holds with weak CHoCH = scratch trade or (b) zone breaks = breaker setup forms. Wait for either CHoCH ✓ on this tap (then re-evaluate score, likely B+ at best) OR clean breakdown (flip to sell breaker setup). Don't pre-empt.",
+    pidgin: "Zone don dey tapped 2 times. Each time, the orders inside dey shrink — by tap 3, most don finish. Score don drop 14 → 11. Two thing fit happen: zone hold weak (na scratch trade) or zone break (na breaker forming). Wait, no front-run."
   }
 ];
 
