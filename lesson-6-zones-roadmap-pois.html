@@ -432,6 +432,125 @@
 </div>
 
 <!-- ====================================================================== -->
+<!-- SECTION 6 — HTF POC MAGNETS (v5.5.3)                                    -->
+<!-- ====================================================================== -->
+
+<div class="section-header" style="border-color:#FFD700;">
+  <h2><span class="num" style="background:linear-gradient(135deg,#FFD700,#b45309);color:#0a1018;">6</span>HTF POC Magnets — The Strongest Institutional Defense Levels</h2>
+</div>
+
+<div class="card" style="border-color:#FFD700;">
+  <h3 style="color:#fde047;">🧲 Why higher-timeframe POCs are the most important POIs in the system</h3>
+  <p style="color:#cbd5e1;font-size:14px;line-height:1.7;margin-bottom:12px;">A Point of Control is the price level where the most volume traded over a given period. Longer period = stronger consensus = harder to push price away. Institutions defend these levels with size because their P&L is reported quarterly/annually.</p>
+
+  <table>
+    <thead>
+      <tr><th>POC Period</th><th>Lookback</th><th>Strength</th><th>Magnet pull</th><th>Score bonus when zone forms here (v5.5.3)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:#fbbf24">Daily POC</strong></td>
+        <td>~24 hours</td>
+        <td>★</td>
+        <td>Mild — single day's accumulation</td>
+        <td>Already tracked via VP module</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#fbbf24">Weekly POC</strong></td>
+        <td>~5-7 days</td>
+        <td>★★</td>
+        <td>Moderate — most-traded price this week</td>
+        <td>Already tracked via NPL Weekly profile</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#E040FB">Monthly POC</strong></td>
+        <td>30 days</td>
+        <td>★★★</td>
+        <td>Strong — month's institutional consensus</td>
+        <td><strong>+1 score</strong></td>
+      </tr>
+      <tr>
+        <td><strong style="color:#FF6F00">3-Month POC</strong></td>
+        <td>90 days (1 quarter)</td>
+        <td>★★★★</td>
+        <td>Strong — quarterly P&L reference</td>
+        <td><strong>+1 score</strong></td>
+      </tr>
+      <tr>
+        <td><strong style="color:#D50000">6-Month POC</strong></td>
+        <td>180 days (half year)</td>
+        <td>★★★★★</td>
+        <td>Very strong — half-year accumulation</td>
+        <td><strong>+2 score</strong></td>
+      </tr>
+      <tr>
+        <td><strong style="color:#FFD700">Yearly POC</strong></td>
+        <td>365 days</td>
+        <td>★★★★★★</td>
+        <td><strong>MAXIMUM</strong> — annual macro magnet</td>
+        <td><strong>+2 score (and dashboard ★)</strong></td>
+      </tr>
+      <tr>
+        <td><strong style="color:#9C27B0">Quarterly Open</strong></td>
+        <td>Q1/Q2/Q3/Q4</td>
+        <td>★★★</td>
+        <td>P&L reference — funds rebalance here</td>
+        <td><strong>+1 score</strong></td>
+      </tr>
+      <tr>
+        <td><strong style="color:#1565C0">Yearly Open</strong></td>
+        <td>YTD</td>
+        <td>★★★</td>
+        <td>Above = bull YTD, below = bear YTD</td>
+        <td><strong>+1 score</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="color:#fde047;margin-top:24px;">🎯 The "Stack" Effect — Maximum Conviction</h3>
+  <p style="color:#cbd5e1;font-size:14px;line-height:1.7;">When 2 or more HTF POCs converge at the same price level (within 1 ATR), the system gives an additional <strong>+1 score "stack bonus"</strong> and the dashboard shows <code>★ 2x STACK</code>.</p>
+  <span class="step ok"><strong>Example stack scenarios:</strong>
+    <ul style="margin-top:8px;padding-left:24px;line-height:1.8;">
+      <li>Monthly POC ≈ Weekly VAL ≈ PDL all at 4485 → triple stack at one level</li>
+      <li>6M POC ≈ Quarterly Open ≈ PWH → another stack</li>
+      <li>Yearly POC alone is already ★ — if a zone forms there + a sweep + CHoCH = institutional defense in action</li>
+    </ul>
+  </span>
+
+  <h3 style="color:#fde047;margin-top:24px;">📥 How to find these prices for input</h3>
+  <p style="color:#cbd5e1;font-size:13px;line-height:1.7;margin-bottom:10px;">Pre-session, use your paid TradingView Volume Profile indicator at different periods:</p>
+  <table>
+    <thead><tr><th>Period setting in paid VP</th><th>Read off</th><th>Type into v5.5.3 input</th></tr></thead>
+    <tbody>
+      <tr><td>"1 Month" / "30D"</td><td>POC price</td><td><code>Monthly POC</code></td></tr>
+      <tr><td>"3 Months" / "90D"</td><td>POC price</td><td><code>3-Month POC</code></td></tr>
+      <tr><td>"6 Months" / "180D"</td><td>POC price</td><td><code>6-Month POC</code></td></tr>
+      <tr><td>"1 Year" / "365D"</td><td>POC price</td><td><code>Yearly POC</code></td></tr>
+      <tr><td>Chart cursor at Q1/Q2/Q3/Q4 first bar</td><td>Open price</td><td><code>Quarterly Open</code></td></tr>
+      <tr><td>Chart cursor at January 1st first bar</td><td>Open price</td><td><code>Yearly Open</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="color:#fde047;margin-top:24px;">🔄 How often to update these inputs</h3>
+  <span class="step"><strong>Daily / Weekly POC:</strong> auto-tracked by NPL module — never type</span>
+  <span class="step"><strong>Monthly POC:</strong> update once per week (it shifts as new days enter the rolling window)</span>
+  <span class="step"><strong>3M / 6M POC:</strong> update every 2 weeks</span>
+  <span class="step"><strong>Yearly POC:</strong> update once per month</span>
+  <span class="step"><strong>Quarterly/Yearly Open:</strong> set once per quarter/year and forget</span>
+
+  <h3 style="color:#fde047;margin-top:24px;">📊 What you'll see on chart (v5.5.3)</h3>
+  <span class="step ok"><strong>Magenta solid line</strong> = Monthly POC</span>
+  <span class="step ok"><strong>Orange solid line</strong> = 3-Month POC</span>
+  <span class="step ok"><strong>Red thick solid line</strong> = 6-Month POC</span>
+  <span class="step ok"><strong>★ Gold thick line</strong> = Yearly POC (the strongest magnet)</span>
+  <span class="step ok"><strong>Purple dashed</strong> = Quarterly Open</span>
+  <span class="step ok"><strong>Blue dashed</strong> = Yearly Open</span>
+  <span class="step ok"><strong>Dashboard "HTF POC" row</strong> shows which level price is currently near + how many magnets stack</span>
+
+  <span class="pidgin">HTF POC na the strongest levels for the whole system. Yearly POC = institutions defend with their full size because their bonus depend on it. When zone form at yearly POC + monthly POC + PDH all stacked = the trade dey magic. Type the prices once a week from your paid VP, system go give you score bonus and dashboard star.</span>
+</div>
+
+<!-- ====================================================================== -->
 <!-- KEY TAKEAWAY                                                            -->
 <!-- ====================================================================== -->
 
