@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Live Chart Reading — How to Decode the Pine v5.2 Indicator in Real Time</title>
+<title>Live Chart Reading — How to Decode the Pine v5.5.2 Indicator in Real Time</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -278,7 +278,7 @@
 <body>
 
 <div class="header">
-  <h1>📖 Live Chart Reading — Pine v5.2 Indicator Decoder</h1>
+  <h1>📖 Live Chart Reading — Pine v5.5.2 Indicator Decoder</h1>
   <div class="subtitle">How to read what the indicator is actually telling you · 3-Second Decision Framework · Real Chart Examples</div>
 </div>
 
@@ -470,7 +470,7 @@
       <!-- BUY ZONE box -->
       <rect x="180" y="180" width="600" height="40" fill="#22c55e" opacity="0.18" stroke="#22c55e" stroke-dasharray="4,2"/>
 
-      <!-- BUY ZONE label inside (matches Pine v5.2 output) -->
+      <!-- BUY ZONE label inside (matches Pine v5.5.2 output) -->
       <rect x="320" y="190" width="320" height="22" fill="#15803d" rx="3"/>
       <text x="480" y="205" text-anchor="middle" fill="#bbf7d0" font-size="13" font-weight="700">BUY ZONE — Waiting CHOCH</text>
 
@@ -504,7 +504,7 @@
       <text x="600" y="35" text-anchor="middle" fill="#fde047" font-size="13" font-weight="700">Score 3/18 | FVG | HTF 2/6 ← read every section of this badge before doing ANYTHING else</text>
     </svg>
     <div class="description">
-      <span class="step info"><strong>Score X/18:</strong> This is the master quality number. Pine v5.2 sums up to 18 confluence points per zone. Read it first. If below 9, no further analysis needed — skip.</span>
+      <span class="step info"><strong>Score X/18:</strong> This is the master quality number. Pine v5.5.2 sums up to 18 confluence points per zone. Read it first. If below 9, no further analysis needed — skip.</span>
       <span class="step info"><strong>FVG / NONE:</strong> Tells you if a Fair Value Gap exists inside this zone. FVG present = better entry precision (you have an exact gap to fill). NONE = entry is fuzzier.</span>
       <span class="step info"><strong>HTF X/6:</strong> Higher-timeframe alignment count. Counts how many of 6 timeframes (4H bias, 1H structure, 15M zone, 5M trigger, EMA, RSI) agree. Below 5 = weak.</span>
       <span class="step warn" style="border-color:#ec4899;color:#fbcfe8;"><strong>⚠️ But which chart timeframe should you read this badge on?</strong> The same badge on a 15M chart shows a different score from the same badge on a 5M chart. You read it TWICE — once on 15M (the gate), once on 5M (the trigger). See <strong>Section 4: The Dual-Pass Score Rule</strong> below.</span>
@@ -732,7 +732,7 @@
   <div class="card" style="border-color: #ec4899;">
     <h3 style="color: #f472b6;">🎯 The badge means different things on 15M vs 5M — read it twice</h3>
     <div class="description">
-      <span class="step info">v5.2 runs on whatever chart you have open. So the score badge on a <strong>15M chart</strong> reflects 15M-bar confluence; the same badge on a <strong>5M chart</strong> reflects 5M-bar confluence. Two different reads, two different jobs.</span>
+      <span class="step info">v5.5.2 runs on whatever chart you have open. So the score badge on a <strong>15M chart</strong> reflects 15M-bar confluence; the same badge on a <strong>5M chart</strong> reflects 5M-bar confluence. Two different reads, two different jobs.</span>
       <span class="step info"><strong>Pass 1 — on the 15M chart:</strong> "Is this zone worth my attention?" If 15M score &lt; 9, SKIP entirely. Never even drop to 5M. The 15M is your <strong>gate</strong>.</span>
       <span class="step info"><strong>Pass 2 — on the 5M chart:</strong> "Is the trigger worth pulling right now?" Only meaningful if 15M already passed. The 5M is your <strong>trigger</strong>.</span>
     </div>
@@ -779,7 +779,7 @@
     <div class="description">
       <span class="step info"><strong>HTF Y/6 is timeframe-invariant.</strong> The HTF count looks UP at 4H + 1H regardless of which chart you're on. If 15M reads HTF 5/6, the 5M will also read HTF 5/6. Only the score number changes between timeframes — HTF count stays the same. So if you see HTF 3/6 on 15M, dropping to 5M won't magically improve it.</span>
       <span class="step info"><strong>Score velocity matters more than absolute score.</strong> A score that JUMPED from 7 → 14 in one bar (sweep + CHoCH just fired) is fresher and stronger than a score that's been sitting at 14 for 20 bars (institutional interest fading). When you switch to a chart with a "good" score, glance back 5 bars: was the score already that high, or did it just spike? Fresh spike = stronger signal.</span>
-      <span class="step info"><strong>Indicator cache quirk.</strong> When you switch chart timeframe (15M ↔ 5M), Pine occasionally doesn't recompute zones. If the score looks suspiciously identical to the other TF, right-click the indicator → "Recompile" to force a fresh calculation. (v5.2 limitation; v5.3 will auto-refresh.)</span>
+      <span class="step info"><strong>Indicator cache quirk.</strong> When you switch chart timeframe (15M ↔ 5M), Pine occasionally doesn't recompute zones. If the score looks suspiciously identical to the other TF, right-click the indicator → "Recompile" to force a fresh calculation. (v5.5.2 limitation; v5.3 will auto-refresh.)</span>
       <span class="step info"><strong>The "perfect storm" configuration.</strong> When all of these line up: (1) inside an active roadmap zone, (2) 15M score ≥ 12 + ✓ CONTINUATION, (3) 5M score ≥ 14 with FVG present, (4) HTF 6/6 on both, (5) inside London or NY AM killzone — that's an A++ with maximum conviction. Bump size to full 1% without hesitation. These show up 2-4 times a week, max.</span>
       <span class="step warn"><strong>Common mistake to avoid.</strong> Reading the badge only on 5M because that's where the action looks crisp. The 5M badge is the LAST gate, not the first. Always 15M first. If you don't enforce that order, you'll repeatedly take 5M-only "A++" setups that have no HTF backing and watch them reverse on you within 4 bars.</span>
       <span class="step warn"><strong>Don't double-count the trigger.</strong> When 5M flips to ✓ CONTINUATION after a sweep, don't go back to 15M and refresh — wait the 15M out. The 15M zone should still say "Waiting CHOCH" or already-confirmed BEFORE the 5M trigger. If 15M flips AFTER 5M, the trigger is reactive, not predictive.</span>
@@ -800,7 +800,7 @@
 <!-- 5.1 Two layers -->
 <div class="grid single">
   <div class="card" style="border-color: #fbbf24;">
-    <h3 style="color: #fde047;">📐 Two Zone Layers in v5.2 (don't confuse them)</h3>
+    <h3 style="color: #fde047;">📐 Two Zone Layers in v5.5.2 (don't confuse them)</h3>
     <div class="description">
       <span class="step info"><strong>Layer 1 — Roadmap zones (bias map):</strong> Drawn at session start (London open or NY open). These are <strong>where to look</strong>, not where to enter. They are heuristic ATR boxes anchored to session H/L. Labeled <code>ROADMAP BUY (AUTO-LONDON)</code> / <code>ROADMAP SELL (AUTO-NY)</code>.</span>
       <span class="step info"><strong>Layer 2 — Trigger zones (entry box):</strong> Drawn ONLY when sweep + CHoCH fires inside (or near) a roadmap zone. These are <strong>where to actually enter</strong>. They carry the score badge. Labeled <code>BUY ZONE — Waiting CHOCH</code> or <code>BUY ZONE ✓ CONTINUATION</code>.</span>
@@ -814,7 +814,7 @@
 <div class="grid" style="margin-top: 20px;">
 
   <div class="card take">
-    <h3>✅ What v5.2 auto-detects (folded into the 18-point score)</h3>
+    <h3>✅ What v5.5.2 auto-detects (folded into the 18-point score)</h3>
     <div class="description">
       <span class="step ok"><strong>Sweep detection</strong> — PDH / PDL / Asian H/L / session H/L / equal H/L</span>
       <span class="step ok"><strong>CHoCH</strong> — structure flip after sweep within 5 bars</span>
@@ -831,7 +831,7 @@
   </div>
 
   <div class="card wait">
-    <h3>⚠️ What v5.2 does NOT see — you must add manually</h3>
+    <h3>⚠️ What v5.5.2 does NOT see — you must add manually</h3>
     <div class="description">
       <span class="step warn"><strong>Volume Profile (POC, HVN, LVN)</strong> — use TradingView's "Volume Profile Visible Range" or "Fixed Range Volume Profile" tool. Why: zone inside HVN = institutional accumulation = stronger hold. Zone at LVN = thin air = price slices through.</span>
       <span class="step warn"><strong>4H / Daily unmitigated POIs</strong> — manually mark HTF demand/supply OBs pre-session. <em>(v5.3.1 spec includes an auto-scanner for this — not yet shipped.)</em></span>
@@ -878,7 +878,7 @@
   <div class="card skip" style="margin-top: 20px;">
     <h3 style="color: #fca5a5;">⚠️ Honesty Caveat — the roadmap is heuristic, not gospel</h3>
     <div class="description">
-      <span class="step warn">v5.2's roadmap is built from <strong>ATR-buffered boxes anchored to session highs/lows</strong> (Asian H/L for London open, more extreme of London or Asian range for NY open). It is <strong>NOT</strong> a real institutional POI scanner. It does NOT read volume profile. It does NOT scan 4H/Daily order blocks.</span>
+      <span class="step warn">v5.5.2's roadmap is built from <strong>ATR-buffered boxes anchored to session highs/lows</strong> (Asian H/L for London open, more extreme of London or Asian range for NY open). It is <strong>NOT</strong> a real institutional POI scanner. It does NOT read volume profile. It does NOT scan 4H/Daily order blocks.</span>
       <span class="step warn">The boxes will sometimes draw at locations that have no actual liquidity behind them. Treat the roadmap as <strong>"first guess at session liquidity,"</strong> not as validated institutional levels.</span>
       <span class="step warn">This is precisely why the manual pre-pass checklist above matters. The score gate measures trigger cleanliness; your eyes have to validate the location quality.</span>
       <span class="step ok"><strong>v5.3.1 spec (planned, not yet shipped):</strong> replaces the heuristic ATR anchor with a proper HTF order-block scanner that scans 4H / Daily for unmitigated demand and supply, then uses those as roadmap anchors instead of session-range high/low. Volume Profile integration (POC/HVN/LVN scoring) is on the v5.4 backlog. Until those ship, you do this validation manually.</span>
@@ -1104,7 +1104,7 @@
 </div>
 
 <div class="footer">
-  SEYILISTOFX SMC · GAMMA NAIJA TRADING SYSTEM · Live Chart Reading · Pine v5.2 Indicator Decoder · Companion to sweep-choch-pattern.html and tier-decision-scenarios.html
+  SEYILISTOFX SMC · GAMMA NAIJA TRADING SYSTEM · Live Chart Reading · Pine v5.5.2 Indicator Decoder · Companion to sweep-choch-pattern.html and tier-decision-scenarios.html
 </div>
 
 </body>
