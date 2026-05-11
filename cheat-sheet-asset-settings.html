@@ -365,7 +365,7 @@
       <tbody>
         <tr><td class="field">Asset Type (v5.5.6)</td><td class="value">XAUUSD (spot) or GC (futures)</td></tr>
         <tr><td class="field">OB Lookback</td><td class="value">20 (gold has wider noise)</td></tr>
-        <tr><td class="field">Min Stop (auto)</td><td class="value">2.0 (or 3.0 for safety)</td></tr>
+        <tr><td class="field">Min Stop (auto, v5.5.7)</td><td class="value">5.0 = 50 pips ★ ~$50 @ 0.10 lot, $500 @ 1 std lot</td></tr>
         <tr><td class="field">$ per point</td><td class="value">10 (MGC) / 100 (GC) / 1 (XAUUSD 0.01 lot) / 100 (XAUUSD 1 lot)</td></tr>
         <tr><td class="field">Profile Period</td><td class="value">Weekly</td></tr>
         <tr><td class="field">Profile Bins</td><td class="value">60 (wide range needs more bins)</td></tr>
@@ -393,7 +393,7 @@
       <tbody>
         <tr><td class="field">Asset Type (v5.5.6)</td><td class="value">EURUSD</td></tr>
         <tr><td class="field">OB Lookback</td><td class="value">15</td></tr>
-        <tr><td class="field">Min Stop (auto)</td><td class="value">0.0010 (10 pips) ★ FIXED in v5.5.6</td></tr>
+        <tr><td class="field">Min Stop (auto, v5.5.7)</td><td class="value">0.0020 = 20 pips ★ $20 @ 1 std lot, $2 @ 0.01 lot</td></tr>
         <tr><td class="field">$ per point</td><td class="value">10 (1 standard lot) / 1 (0.01 lot)</td></tr>
         <tr><td class="field">Profile Period</td><td class="value">Weekly</td></tr>
         <tr><td class="field">Profile Bins</td><td class="value">40</td></tr>
@@ -420,7 +420,7 @@
       <tbody>
         <tr><td class="field">Asset Type (v5.5.6)</td><td class="value">GBPUSD</td></tr>
         <tr><td class="field">OB Lookback</td><td class="value">15</td></tr>
-        <tr><td class="field">Min Stop (auto)</td><td class="value">0.0010 (10 pips) ★ FIXED in v5.5.6 — was buggy on 'Other'</td></tr>
+        <tr><td class="field">Min Stop (auto, v5.5.7)</td><td class="value">0.0020 = 20 pips ★ $20 @ 1 std lot, $2 @ 0.01 lot — absorbs GBP volatility</td></tr>
         <tr><td class="field">$ per point</td><td class="value">10 (1 std lot) / 1 (0.01 lot)</td></tr>
         <tr><td class="field">Profile Period</td><td class="value">Weekly</td></tr>
         <tr><td class="field">Profile Bins</td><td class="value">40</td></tr>
@@ -527,9 +527,9 @@
       <tr><td class="field">NQ (Nasdaq E-mini)</td><td class="value">8.0</td><td>~$160 @ $20/pt</td><td>Traditional safe — not user's preference</td></tr>
       <tr><td class="field">ES (S&P E-mini)</td><td class="value">3.0</td><td>~$150 @ $50/pt</td><td>Traditional safe</td></tr>
       <tr><td class="field">GC (Gold Futures)</td><td class="value">2.0</td><td>~$200 @ $100/pt</td><td>Traditional safe</td></tr>
-      <tr><td class="field"><strong>XAUUSD</strong> (Gold Spot) ★ FIXED</td><td class="value">3.0</td><td>$3 below spot</td><td>Was incorrectly using "Other" before v5.5.6</td></tr>
-      <tr><td class="field"><strong>EURUSD</strong> ★ FIXED</td><td class="value">0.0010 (10 pips)</td><td>$100 @ 1 std lot</td><td>Was buggy 4.0 on "Other" before v5.5.6</td></tr>
-      <tr><td class="field"><strong>GBPUSD</strong> ★ FIXED</td><td class="value">0.0010 (10 pips)</td><td>$100 @ 1 std lot</td><td>Was buggy 5.0 on "Other" before v5.5.6</td></tr>
+      <tr><td class="field"><strong>XAUUSD</strong> (Gold Spot) ★ v5.5.7</td><td class="value">5.0 (50 pips @ $0.10/pip)</td><td>$50 @ 0.10 lot · $500 @ 1 std lot</td><td>Realistic gold scalper floor</td></tr>
+      <tr><td class="field"><strong>EURUSD</strong> ★ v5.5.7</td><td class="value">0.0020 (20 pips)</td><td>$200 @ 1 std lot · $20 @ 0.10 lot · $2 @ 0.01 lot</td><td>Standard FX scalper range</td></tr>
+      <tr><td class="field"><strong>GBPUSD</strong> ★ v5.5.7</td><td class="value">0.0020 (20 pips)</td><td>$200 @ 1 std lot · $20 @ 0.10 lot · $2 @ 0.01 lot</td><td>Wider than EUR-typical to absorb GBP volatility</td></tr>
       <tr><td class="field">Other</td><td class="value">4.0</td><td>Verify before live</td><td>Fallback — avoid using on FX (4.0 in raw price = nonsense on EUR)</td></tr>
     </tbody>
   </table>
