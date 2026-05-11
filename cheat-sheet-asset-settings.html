@@ -363,7 +363,7 @@
     <table class="settings-table">
       <thead><tr><th>Setting</th><th>Value</th></tr></thead>
       <tbody>
-        <tr><td class="field">Asset Type</td><td class="value">GC</td></tr>
+        <tr><td class="field">Asset Type (v5.5.6)</td><td class="value">XAUUSD (spot) or GC (futures)</td></tr>
         <tr><td class="field">OB Lookback</td><td class="value">20 (gold has wider noise)</td></tr>
         <tr><td class="field">Min Stop (auto)</td><td class="value">2.0 (or 3.0 for safety)</td></tr>
         <tr><td class="field">$ per point</td><td class="value">10 (MGC) / 100 (GC) / 1 (XAUUSD 0.01 lot) / 100 (XAUUSD 1 lot)</td></tr>
@@ -391,9 +391,9 @@
     <table class="settings-table">
       <thead><tr><th>Setting</th><th>Value</th></tr></thead>
       <tbody>
-        <tr><td class="field">Asset Type</td><td class="value">Other</td></tr>
+        <tr><td class="field">Asset Type (v5.5.6)</td><td class="value">EURUSD</td></tr>
         <tr><td class="field">OB Lookback</td><td class="value">15</td></tr>
-        <tr><td class="field">Min Stop (auto)</td><td class="value">4.0 (~4 pips equivalent)</td></tr>
+        <tr><td class="field">Min Stop (auto)</td><td class="value">0.0010 (10 pips) ★ FIXED in v5.5.6</td></tr>
         <tr><td class="field">$ per point</td><td class="value">10 (1 standard lot) / 1 (0.01 lot)</td></tr>
         <tr><td class="field">Profile Period</td><td class="value">Weekly</td></tr>
         <tr><td class="field">Profile Bins</td><td class="value">40</td></tr>
@@ -418,9 +418,9 @@
     <table class="settings-table">
       <thead><tr><th>Setting</th><th>Value</th></tr></thead>
       <tbody>
-        <tr><td class="field">Asset Type</td><td class="value">Other</td></tr>
+        <tr><td class="field">Asset Type (v5.5.6)</td><td class="value">GBPUSD</td></tr>
         <tr><td class="field">OB Lookback</td><td class="value">15</td></tr>
-        <tr><td class="field">Min Stop (auto)</td><td class="value">5.0 (~5 pips, vs 4 on EUR)</td></tr>
+        <tr><td class="field">Min Stop (auto)</td><td class="value">0.0010 (10 pips) ★ FIXED in v5.5.6 — was buggy on 'Other'</td></tr>
         <tr><td class="field">$ per point</td><td class="value">10 (1 std lot) / 1 (0.01 lot)</td></tr>
         <tr><td class="field">Profile Period</td><td class="value">Weekly</td></tr>
         <tr><td class="field">Profile Bins</td><td class="value">40</td></tr>
@@ -505,6 +505,40 @@
     <strong>Quick MenthorQ approach:</strong> Open MenthorQ → look for "Expected Move" or "1 SD Move" panel → copy the % number → paste into v5.5.2. Done in 5 seconds per instrument. <br><br>
     <strong>If MenthorQ down or no access:</strong> Open the asset's options chain (NDX, SPX, GLD, FXE, FXB) → find ATM strike → straddle price (call premium + put premium) → divide by spot → multiply by 100 = daily expected move %. Takes 1 minute.
     <span class="pidgin">MenthorQ na the easy way — see expected move number, type for v5.5. If MenthorQ no work, look ATM straddle from options chain. 5 seconds vs 1 minute, your choice.</span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PER-ASSET MIN_STOP FLOORS (v5.5.6) — NEW                       -->
+<!-- ============================================================ -->
+
+<div class="common-section" style="border-color:#3b82f6;">
+  <h2 style="color:#93c5fd;">🛡️ Per-Asset Min Stop Floors (v5.5.6) — pick the right Asset Type</h2>
+  <p style="color:#9ca3af;font-size:13px;margin-bottom:14px;">v5.5.6 expanded the Asset Type dropdown from 4 to 10 options. Each option sets a calibrated <strong>minimum stop floor</strong> in PRICE UNITS — the system uses <code>max(ATR × atr_mult, min_stop)</code>, so this floor only kicks in when ATR-based stop is too tight. Use the <code>Custom min stop override</code> input below the dropdown if you want a specific value.</p>
+
+  <table class="settings-table">
+    <thead>
+      <tr><th>Asset Type</th><th>Min stop (points/units)</th><th>$ risk @ standard $/pt</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="field"><strong>MGC</strong> (Micro Gold)</td><td class="value">7.0</td><td>$70 @ $10/pt ★ user spec</td><td>User's primary instrument</td></tr>
+      <tr><td class="field"><strong>MNQ</strong> (Micro Nasdaq)</td><td class="value">30.0</td><td>$60 @ $2/pt ★ user spec</td><td>Used instead of NQ standard</td></tr>
+      <tr><td class="field"><strong>MES</strong> (Micro S&P)</td><td class="value">12.0</td><td>$60 @ $5/pt ★ user spec</td><td>Used instead of ES standard</td></tr>
+      <tr><td class="field">NQ (Nasdaq E-mini)</td><td class="value">8.0</td><td>~$160 @ $20/pt</td><td>Traditional safe — not user's preference</td></tr>
+      <tr><td class="field">ES (S&P E-mini)</td><td class="value">3.0</td><td>~$150 @ $50/pt</td><td>Traditional safe</td></tr>
+      <tr><td class="field">GC (Gold Futures)</td><td class="value">2.0</td><td>~$200 @ $100/pt</td><td>Traditional safe</td></tr>
+      <tr><td class="field"><strong>XAUUSD</strong> (Gold Spot) ★ FIXED</td><td class="value">3.0</td><td>$3 below spot</td><td>Was incorrectly using "Other" before v5.5.6</td></tr>
+      <tr><td class="field"><strong>EURUSD</strong> ★ FIXED</td><td class="value">0.0010 (10 pips)</td><td>$100 @ 1 std lot</td><td>Was buggy 4.0 on "Other" before v5.5.6</td></tr>
+      <tr><td class="field"><strong>GBPUSD</strong> ★ FIXED</td><td class="value">0.0010 (10 pips)</td><td>$100 @ 1 std lot</td><td>Was buggy 5.0 on "Other" before v5.5.6</td></tr>
+      <tr><td class="field">Other</td><td class="value">4.0</td><td>Verify before live</td><td>Fallback — avoid using on FX (4.0 in raw price = nonsense on EUR)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="notes-box" style="margin-top:14px;">
+    <strong>Custom override:</strong> Set <code>Custom min stop override</code> input to any non-zero value to override the asset preset. Use when you want a specific floor different from default. Example: <code>10.0</code> on MNQ = widen stops to ~$20 per trade.<br><br>
+    <strong>Effective stop:</strong> The system always uses the LARGER of <code>ATR × atr_mult</code> or the min_stop. So if ATR is wide, ATR-based stop wins; if ATR is tight, the asset floor kicks in.<br><br>
+    <strong>v5.5.6 bug fix:</strong> Previously EURUSD/GBPUSD on "Other" produced impossible stops if ATR ever returned 0 or NaN (raw 4.0 below 1.0850 = negative price). v5.5.6's proper FX entries use pip-correct units.
+    <span class="pidgin">Pick the right asset type from dropdown — don't use "Other" for spot FX or you go fall into the old bug. MGC = 7 points ($70), MNQ = 30 points ($60), MES = 12 points ($60). Want different floor? Use the custom override input.</span>
   </div>
 </div>
 
